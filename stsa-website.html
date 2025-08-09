@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STSA | South Texas Surety Association</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #1a3a52;
+            --burnt-orange: #c05621;
+            --warm-orange: #e67e22;
+            --dark-blue: #0f2537;
+            --light-gray: #f7f9fc;
+            --white: #ffffff;
+            --shadow: rgba(0,0,0,0.1);
+            --text-dark: #2c3e50;
+            --text-light: #6c757d;
+            --gold: #ffd700;
+        }
+
+        * {
+            cursor: none;
+        }
+
+        .cursor {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--burnt-orange);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transition: all 0.1s ease;
+            z-index: 9999;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            background: rgba(192, 86, 33, 0.1);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 9998;
+        }
+
+        body {
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            background: var(--white);
+            cursor: none;
+        }
+
+        /* Preloader */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--navy);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .preloader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-star {
+            width: 100px;
+            height: 100px;
+            animation: rotateStar 2s linear infinite;
+        }
+
+        @keyframes rotateStar {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255,255,255,0);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        nav.scrolled {
+            background: rgba(255,255,255,0.98);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+        .logo-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--navy);
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--navy);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(90deg, var(--burnt-orange), var(--warm-orange));
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--burnt-orange), var(--warm-orange));
+            color: white !important;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 4px 20px rgba(192, 86, 33, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(192, 86, 33, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--navy) 100%);
+            position: relative;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-bg-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.05;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.1) 35px, rgba(255,255,255,.1) 70px);
+        }
+
+        .floating-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .floating-star {
+            position: absolute;
+            color: var(--burnt-orange);
+            opacity: 0.1;
+            animation: floatRandom 20s infinite ease-in-out;
+        }
+
+        @keyframes floatRandom {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(100px, -100px) rotate(90deg); }
+            50% { transform: translate(-100px, -200px) rotate(180deg); }
+            75% { transform: translate(-150px, 100px) rotate(270deg); }
+        }
+
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .hero-text h1 {
+            font-size: 4rem;
+            color: white;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .hero-text h1 span {
+            background: linear-gradient(135deg, var(--burnt-orange), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: inline-block;
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .hero-text p {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid var(--burnt-orange);
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--burnt-orange);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-secondary:hover::before {
+            left: 0;
+        }
+
+        .btn-secondary:hover {
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Interactive Stats Card */
+        .hero-visual {
+            position: relative;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 3rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 
+                0 20px 40px rgba(0,0,0,0.2),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .stats-card:hover::before {
+            left: 100%;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 30px 60px rgba(0,0,0,0.3),
+                inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+
+        .stats-card::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, var(--burnt-orange), var(--navy));
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        .card-sparkles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .sparkle {
+            position: absolute;
+            font-size: 20px;
+            animation: sparkleFloat 3s ease-in-out infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes sparkleFloat {
+            0%, 100% { 
+                transform: translateY(0) scale(1); 
+                opacity: 0.3;
+            }
+            50% { 
+                transform: translateY(-20px) scale(1.2); 
+                opacity: 1;
+            }
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            color: white;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            padding: 1rem;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent);
+            transition: width 0.4s ease, height 0.4s ease;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        .stat-item:hover::before {
+            width: 150px;
+            height: 150px;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--burnt-orange), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover .stat-number {
+            transform: scale(1.1);
+            filter: brightness(1.2);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover .stat-label {
+            opacity: 1;
+            letter-spacing: 1px;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, var(--light-gray) 0%, white 100%);
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--navy);
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-header h2::after {
+            content: '★';
+            position: absolute;
+            top: -20px;
+            right: -40px;
+            color: var(--burnt-orange);
+            font-size: 1.5rem;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+            50% { opacity: 0.5; transform: scale(1.2) rotate(180deg); }
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--burnt-orange), var(--warm-orange));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--burnt-orange), var(--warm-orange));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(192, 86, 33, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .feature-card h3 {
+            font-size: 1.4rem;
+            color: var(--navy);
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        /* Education Hub */
+        .education {
+            padding: 6rem 2rem;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .education::before {
+            content: '★';
+            position: absolute;
+            font-size: 500px;
+            color: rgba(192, 86, 33, 0.02);
+            top: -200px;
+            right: -200px;
+            transform: rotate(15deg);
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 2.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .resource-card {
+            background: linear-gradient(135deg, white, var(--light-gray));
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+
+        .resource-header {
+            background: linear-gradient(135deg, var(--navy), var(--dark-blue));
+            color: white;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource-header::after {
+            content: '';
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            top: -50px;
+            right: -50px;
+        }
+
+        .resource-header h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .badge {
+            background: var(--burnt-orange);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: inline-block;
+            box-shadow: 0 4px 15px rgba(192, 86, 33, 0.3);
+        }
+
+        .resource-content {
+            padding: 2rem;
+        }
+
+        .resource-list {
+            list-style: none;
+        }
+
+        .resource-list li {
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-dark);
+        }
+
+        .resource-list li:hover {
+            padding-left: 1rem;
+            color: var(--burnt-orange);
+            background: rgba(192, 86, 33, 0.05);
+            margin: 0 -2rem;
+            padding-right: 2rem;
+            padding-left: 3rem;
+        }
+
+        .resource-list li::before {
+            content: '→';
+            margin-right: 1rem;
+            color: var(--burnt-orange);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Events */
+        .events {
+            padding: 6rem 2rem;
+            background: linear-gradient(180deg, var(--light-gray) 0%, white 100%);
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 25px;
+            padding: 0;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            max-width: 1200px;
+            margin: 2rem auto;
+        }
+
+        .event-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+        }
+
+        .event-date {
+            background: linear-gradient(135deg, var(--burnt-orange), var(--warm-orange));
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .event-date .day {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1;
+        }
+
+        .event-date .month {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+        }
+
+        .event-details {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .event-details h3 {
+            color: var(--navy);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .event-action {
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 6rem 2rem;
+            background: linear-gradient(135deg, var(--navy) 0%, var(--dark-blue) 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta::before,
+        .cta::after {
+            content: '★';
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            animation: float 10s ease-in-out infinite;
+        }
+
+        .cta::before {
+            top: -100px;
+            left: -100px;
+        }
+
+        .cta::after {
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(180deg); }
+        }
+
+        .cta h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 900;
+        }
+
+        .cta h2 span {
+            background: linear-gradient(135deg, var(--burnt-orange), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-blue);
+            color: white;
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-column h4 {
+            margin-bottom: 1.5rem;
+            color: var(--burnt-orange);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column ul li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-column ul li a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-left: 0;
+        }
+
+        .footer-column ul li a:hover {
+            color: var(--burnt-orange);
+            padding-left: 10px;
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 3px;
+            background: var(--navy);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger::before,
+        .hamburger::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 3px;
+            background: var(--navy);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger::before {
+            top: -10px;
+        }
+
+        .hamburger::after {
+            bottom: -10px;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 100%;
+                height: 100vh;
+                background: white;
+                flex-direction: column;
+                padding: 5rem 2rem;
+                transition: right 0.3s ease;
+                box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-text h1 {
+                font-size: 3rem;
+            }
+
+            .event-card {
+                grid-template-columns: 1fr;
+            }
+
+            .event-date {
+                padding: 1.5rem;
+                flex-direction: row;
+                gap: 1rem;
+            }
+
+            .stat-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .hero-text h1 {
+                font-size: 2.5rem;
+            }
+
+            .section-header h2 {
+                font-size: 2rem;
+            }
+
+            .feature-grid,
+            .resource-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Preloader -->
+    <div class="preloader" id="preloader">
+        <svg class="loader-star" viewBox="0 0 100 100">
+            <polygon points="50,5 61,35 95,35 69,57 80,87 50,65 20,87 31,57 5,35 39,35" 
+                     fill="#c05621" stroke="#c05621" stroke-width="2"/>
+        </svg>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo-wrapper">
+                <svg class="logo-img" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#1a3a52" stroke-width="8"/>
+                    <polygon points="50,15 61,40 88,40 66,57 77,82 50,65 23,82 34,57 12,40 39,40" 
+                             fill="#c05621"/>
+                </svg>
+                <span class="logo-text">STSA</span>
+            </a>
+            <button class="mobile-menu-toggle" id="mobileMenu">
+                <div class="hamburger"></div>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#about">About</a></li>
+                <li><a href="#education">Education</a></li>
+                <li><a href="#events">Events</a></li>
+                <li><a href="#resources">Resources</a></li>
+                <li><a href="#membership" class="btn-primary">Join Now</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Floating Stars Background -->
+    <div class="floating-stars">
+        <div class="floating-star" style="top: 10%; left: 10%; font-size: 30px;">★</div>
+        <div class="floating-star" style="top: 70%; left: 80%; font-size: 40px;">★</div>
+        <div class="floating-star" style="top: 30%; left: 60%; font-size: 25px;">★</div>
+        <div class="floating-star" style="top: 80%; left: 20%; font-size: 35px;">★</div>
+        <div class="floating-star" style="top: 50%; left: 90%; font-size: 28px;">★</div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-bg-pattern"></div>
+        <div class="hero-content">
+            <div class="hero-grid">
+                <div class="hero-text fade-in">
+                    <h1>South Texas <span>Surety Excellence</span></h1>
+                    <p>Empowering contractors, strengthening bonds, and building the foundation for construction success across South Texas.</p>
+                    <div class="hero-buttons">
+                        <a href="#membership" class="btn-primary">Become a Member</a>
+                        <a href="#events" class="btn-secondary">Explore Events</a>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="stats-card">
+                        <div class="card-sparkles">
+                            <span class="sparkle" style="top: 10%; left: 20%; animation-delay: 0s;">✨</span>
+                            <span class="sparkle" style="top: 80%; left: 70%; animation-delay: 1s;">✨</span>
+                            <span class="sparkle" style="top: 40%; left: 90%; animation-delay: 2s;">✨</span>
+                        </div>
+                        <div class="stat-grid">
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Member Companies</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Years Strong</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-number">0</span>
+                                <span class="stat-label">Commitment</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="about">
+        <div class="container">
+            <div class="section-header">
+                <h2>What We Deliver</h2>
+                <p>Premier resources and connections for the surety industry</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Elite Education</h3>
+                    <p>Cutting-edge workshops on AI, technology, and industry best practices. Monthly sessions featuring national experts and local leaders.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Power Networking</h3>
+                    <p>Connect with decision-makers, from contractors to attorneys, bankers to bond producers. Build relationships that drive business.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">📈</div>
+                    <h3>Market Intelligence</h3>
+                    <p>Real-time insights on market capacity, legislative changes, and industry trends. Stay ahead with exclusive member-only reports.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🏗️</div>
+                    <h3>Contract Expertise</h3>
+                    <p>Navigate complex contracts with confidence. Access vetted forms, expert reviews, and guidance on challenging bond requirements.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">🌟</div>
+                    <h3>Professional Growth</h3>
+                    <p>Continuing education credits, Texas State University partnerships, and leadership development opportunities.</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <div class="feature-icon">💪</div>
+                    <h3>Industry Advocacy</h3>
+                    <p>Your voice at state and national levels. We fight for fair bonding requirements and contractor-friendly legislation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Education Hub -->
+    <section class="education" id="education">
+        <div class="container">
+            <div class="section-header">
+                <h2>Knowledge Center</h2>
+                <p>Master the surety industry with our comprehensive resources</p>
+            </div>
+            <div class="resource-grid">
+                <div class="resource-card fade-in">
+                    <div class="resource-header">
+                        <h3>Bond Mastery</h3>
+                        <span class="badge">FOUNDATIONS</span>
+                    </div>
+                    <div class="resource-content">
+                        <ul class="resource-list">
+                            <li>Performance Bond Strategies</li>
+                            <li>Payment Bond Optimization</li>
+                            <li>Bid Bond Best Practices</li>
+                            <li>Maintenance Bond Management</li>
+                            <li>Supply Bond Solutions</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="resource-card fade-in">
+                    <div class="resource-header">
+                        <h3>Contractor Toolkit</h3>
+                        <span class="badge">PREMIUM TOOLS</span>
+                    </div>
+                    <div class="resource-content">
+                        <ul class="resource-list">
+                            <li>Financial Statement Excellence</li>
+                            <li>WIP Reporting Mastery</li>
+                            <li>Bonding Capacity Calculator</li>
+                            <li>Risk Assessment Framework</li>
+                            <li>Growth Strategy Templates</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="resource-card fade-in">
+                    <div class="resource-header">
+                        <h3>Market Edge</h3>
+                        <span class="badge">LATEST INTEL</span>
+                    </div>
+                    <div class="resource-content">
+                        <ul class="resource-list">
+                            <li>2025 Texas Legislative Update</li>
+                            <li>AI & Technology in Surety</li>
+                            <li>Federal Contract Opportunities</li>
+                            <li>Market Capacity Analysis</li>
+                            <li>Economic Forecast Reports</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section class="events" id="events">
+        <div class="container">
+            <div class="section-header">
+                <h2>Signature Events</h2>
+                <p>Where industry leaders gather, learn, and grow</p>
+            </div>
+            <div class="event-card fade-in">
+                <div class="event-date">
+                    <span class="day">12</span>
+                    <span class="month">SEP</span>
+                </div>
+                <div class="event-details">
+                    <h3>AI Revolution in Construction & Surety</h3>
+                    <p>Chris Johnson presents game-changing AI applications for the surety industry</p>
+                    <p style="color: var(--burnt-orange); font-weight: 600;">📍 Paloma Blanca, San Antonio</p>
+                </div>
+                <div class="event-action">
+                    <a href="#" class="btn-primary">Register Now</a>
+                </div>
+            </div>
+            <div class="event-card fade-in">
+                <div class="event-date">
+                    <span class="day">14</span>
+                    <span class="month">NOV</span>
+                </div>
+                <div class="event-details">
+                    <h3>Annual Texas Surety Summit</h3>
+                    <p>2026 market predictions, legislative updates, and networking excellence</p>
+                    <p style="color: var(--burnt-orange); font-weight: 600;">📍 Four Seasons, Austin</p>
+                </div>
+                <div class="event-action">
+                    <a href="#" class="btn-primary">Save Your Seat</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="membership">
+        <div class="cta-content">
+            <h2>Join the <span>Elite</span> in South Texas Surety</h2>
+            <p>Elevate your business. Expand your network. Excel in your market.</p>
+            <a href="#contact" class="btn-primary">Apply for Membership Today</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-column">
+                <h4>About STSA</h4>
+                <p style="line-height: 1.6; opacity: 0.9;">The premier surety association advocating for bond excellence through education, networking, and industry leadership since 2009.</p>
+            </div>
+            <div class="footer-column">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#events">Events</a></li>
+                    <li><a href="#education">Education</a></li>
+                    <li><a href="#membership">Membership</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">Bond Forms Library</a></li>
+                    <li><a href="#">Industry News</a></li>
+                    <li><a href="#">Member Portal</a></li>
+                    <li><a href="#">Bylaws & Governance</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Connect</h4>
+                <ul>
+                    <li>📍 San Antonio, Texas</li>
+                    <li>📧 info@suretysouthtx.com</li>
+                    <li>🔗 LinkedIn: /company/stsa</li>
+                    <li>📱 (210) 555-STSA</li>
+                </ul>
+            </div>
+        </div>
+        <div style="text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 2rem; opacity: 0.7;">
+            <p>&copy; 2025 South Texas Surety Association | 501(c)(6) Non-Profit | Building Trust Since 2009</p>
+        </div>
+    </footer>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                follower.style.left = e.clientX - 10 + 'px';
+                follower.style.top = e.clientY - 10 + 'px';
+            }, 100);
+        });
+
+        // Preloader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('preloader').classList.add('fade-out');
+            }, 1500);
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navLinks = document.getElementById('navLinks');
+        
+        mobileMenu.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    // Close mobile menu if open
+                    navLinks.classList.remove('active');
+                }
+            });
+        });
+
+        // Animated Counter
+        function animateCounter(element, target, suffix = '') {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + suffix;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + suffix;
+                }
+            }, 30);
+        }
+
+        // Intersection Observer for animations and counters
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate');
+                    
+                    // Animate counters when stats card comes into view
+                    if (entry.target.classList.contains('stats-card')) {
+                        const counters = entry.target.querySelectorAll('.stat-number');
+                        counters[0] && animateCounter(counters[0], 25, '+');
+                        counters[1] && animateCounter(counters[1], 16, '');
+                        counters[2] && animateCounter(counters[2], 100, '%');
+                        observer.unobserve(entry.target);
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .stats-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Interactive stat items - ripple effect on click
+        document.querySelectorAll('.stat-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.width = '20px';
+                ripple.style.height = '20px';
+                ripple.style.background = 'rgba(255,255,255,0.5)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.transform = 'translate(-50%, -50%)';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.animation = 'rippleOut 0.6s ease-out';
+                
+                const rect = this.getBoundingClientRect();
+                ripple.style.left = (e.clientX - rect.left) + 'px';
+                ripple.style.top = (e.clientY - rect.top) + 'px';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add ripple animation to style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rippleOut {
+                to {
+                    width: 200px;
+                    height: 200px;
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Parallax effect on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('.hero-bg-pattern');
+            if (parallax) {
+                parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
