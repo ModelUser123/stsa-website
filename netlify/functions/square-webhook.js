@@ -25,14 +25,19 @@ exports.handler = async (event) => {
 
     const body = JSON.parse(rawBody);
 
-    // Only process payment.completed events
-    if (body.type !== 'payment.completed') {
+    // Only process payment.updated events where status is COMPLETED
+    if (body.type !== 'payment.updated') {
       return { statusCode: 200, body: 'OK' };
     }
 
-    const orderId = body?.data?.object?.payment?.order_id;
+    const payment = body?.data?.object?.payment;
+    if (!payment || payment.status !== 'COMPLETED') {
+      return { statusCode: 200, body: 'OK' };
+    }
+
+    const orderId = payment.order_id;
     if (!orderId) {
-      console.warn('square-webhook: no order_id in payment.completed event');
+      console.warn('square-webhook: no order_id in payment.updated event');
       return { statusCode: 200, body: 'OK' };
     }
 
