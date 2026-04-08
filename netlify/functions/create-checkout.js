@@ -91,7 +91,7 @@ exports.handler = async (event) => {
         locationId: process.env.SQUARE_LOCATION_ID,
         lineItems: [
           {
-            name: `${activeEvent.name || 'Event'} — ${guestCount} guest${guestCount !== 1 ? 's' : ''}`,
+            name: `${activeEvent.event_name || 'STSA Event'} — ${guestCount} guest${guestCount !== 1 ? 's' : ''}`,
             quantity: '1',
             basePriceMoney: {
               amount: totalAmountCents,

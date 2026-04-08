@@ -16,6 +16,11 @@ exports.handler = async (event) => {
 
   try {
     const { name, email, meal_choice } = JSON.parse(event.body || '{}');
+
+    if (!name || !meal_choice) {
+      return jsonResponse(400, { error: 'name and meal_choice are required' });
+    }
+
     const supabase = getSupabaseClient();
 
     // Get active event
@@ -36,7 +41,7 @@ exports.handler = async (event) => {
       .insert({
         event_id: activeEvent.id,
         name,
-        email,
+        email: email || '',
         meal_choice,
         is_walkin: true,
         payment_status: 'paid',

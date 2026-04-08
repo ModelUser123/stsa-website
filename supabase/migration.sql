@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS registrations (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   event_id uuid NOT NULL REFERENCES events(id) ON DELETE CASCADE,
   name text NOT NULL,
-  email text NOT NULL,
+  email text NOT NULL DEFAULT '',
   phone text,
   meal_choice text NOT NULL,
   is_additional_guest boolean NOT NULL DEFAULT false,
