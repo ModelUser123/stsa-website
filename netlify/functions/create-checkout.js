@@ -72,12 +72,12 @@ exports.handler = async (event) => {
 
     // Create Square payment link
     const squareEnvironment =
-      Netlify.env.get('SQUARE_ENVIRONMENT') === 'production'
+      process.env.SQUARE_ENVIRONMENT === 'production'
         ? Environment.Production
         : Environment.Sandbox;
 
     const squareClient = new Client({
-      accessToken: Netlify.env.get('SQUARE_ACCESS_TOKEN'),
+      accessToken: process.env.SQUARE_ACCESS_TOKEN,
       environment: squareEnvironment,
     });
 
@@ -88,7 +88,7 @@ exports.handler = async (event) => {
     const { result: checkoutResult, statusCode } = await squareClient.checkoutApi.createPaymentLink({
       idempotencyKey: primaryRegistration.id,
       order: {
-        locationId: Netlify.env.get('SQUARE_LOCATION_ID'),
+        locationId: process.env.SQUARE_LOCATION_ID,
         lineItems: [
           {
             name: `${activeEvent.name || 'Event'} — ${guestCount} guest${guestCount !== 1 ? 's' : ''}`,
@@ -104,7 +104,7 @@ exports.handler = async (event) => {
         },
       },
       checkoutOptions: {
-        redirectUrl: `${Netlify.env.get('URL')}/rsvp/confirmation.html?reg=${primaryRegistration.id}`,
+        redirectUrl: `${process.env.URL}/rsvp/confirmation.html?reg=${primaryRegistration.id}`,
       },
     });
 

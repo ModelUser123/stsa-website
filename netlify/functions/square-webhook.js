@@ -9,12 +9,12 @@ exports.handler = async (event) => {
   try {
     const rawBody = event.body || '';
     const signature = event.headers['x-square-hmacsha256-signature'];
-    const notificationUrl = `${Netlify.env.get('URL')}/.netlify/functions/square-webhook`;
+    const notificationUrl = `${process.env.URL}/.netlify/functions/square-webhook`;
 
     // Verify Square webhook signature
     const combined = notificationUrl + rawBody;
     const expected = crypto
-      .createHmac('sha256', Netlify.env.get('SQUARE_WEBHOOK_SIGNATURE_KEY'))
+      .createHmac('sha256', process.env.SQUARE_WEBHOOK_SIGNATURE_KEY)
       .update(combined)
       .digest('base64');
 

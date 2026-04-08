@@ -14,7 +14,7 @@ function unauthorized() {
 
 function verifyAdminToken(event) {
   const token = event.headers['x-admin-token'] || event.headers['X-Admin-Token'];
-  const password = Netlify.env.get('ADMIN_PASSWORD');
+  const password = process.env.ADMIN_PASSWORD;
   if (!token || !password) {
     return false;
   }
