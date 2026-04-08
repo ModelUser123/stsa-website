@@ -6,10 +6,19 @@ const ALLOWED_ORIGINS = [
   'http://localhost:3000',
 ];
 
+// Security headers included on every API response
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+};
+
 function getCorsHeaders(event) {
   const origin = (event.headers && (event.headers['origin'] || event.headers['Origin'])) || '';
   const allowedOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
+    ...SECURITY_HEADERS,
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
@@ -19,6 +28,7 @@ function getCorsHeaders(event) {
 
 // Keep a static CORS_HEADERS export for backwards compat (non-origin-sensitive uses)
 const CORS_HEADERS = {
+  ...SECURITY_HEADERS,
   'Access-Control-Allow-Origin': 'https://stsa-events.netlify.app',
   'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',

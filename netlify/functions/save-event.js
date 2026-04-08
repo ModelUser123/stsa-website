@@ -53,6 +53,7 @@ exports.handler = async (event) => {
 
     return jsonResponse(200, { event: savedEvent });
   } catch (err) {
-    return jsonResponse(500, { error: err.message });
+    console.error('save-event error:', err);
+    return jsonResponse(500, { error: 'Unable to save event. Please try again.' });
   }
 };

@@ -40,6 +40,7 @@ exports.handler = async (event) => {
 
     return jsonResponse(200, { registrations: registrations || [] });
   } catch (err) {
-    return jsonResponse(500, { error: err.message });
+    console.error('get-registrations error:', err);
+    return jsonResponse(500, { error: 'Unable to load registrations. Please try again.' });
   }
 };

@@ -24,6 +24,7 @@ exports.handler = async (event) => {
 
     return jsonResponse(200, { event: data || null });
   } catch (err) {
-    return jsonResponse(500, { error: err.message });
+    console.error('get-event error:', err);
+    return jsonResponse(500, { error: 'Unable to load event. Please try again.' });
   }
 };
