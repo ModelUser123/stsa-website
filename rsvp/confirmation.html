@@ -3,71 +3,186 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>You're Registered! | STSA</title>
+  <title>See You There! | STSA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="/shared/brand.css">
   <link rel="stylesheet" href="styles.css">
   <style>
+    /* ── Confirmation Page ─────────────────────────────── */
+
+    body {
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      background: var(--rsvp-off-white, #f8f6f3);
+      min-height: 100vh;
+    }
+
     .confirm-screen {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--light-gray);
-      padding: 24px;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(201,169,110,0.08) 0%, transparent 60%),
+        var(--rsvp-off-white, #f8f6f3);
+      padding: 32px 20px;
     }
 
     .confirm-card {
-      background: var(--white);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
-      padding: 48px 40px;
-      max-width: 560px;
+      background: #ffffff;
+      border-radius: 24px;
+      border: 1px solid #e8e4de;
+      box-shadow:
+        0 4px 32px rgba(10,22,40,0.08),
+        0 1px 4px rgba(10,22,40,0.04);
+      padding: 56px 44px 48px;
+      max-width: 540px;
       width: 100%;
       text-align: center;
+      animation: cardEntrance 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+    }
+
+    @keyframes cardEntrance {
+      from { opacity: 0; transform: translateY(32px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── Animated Checkmark ─── */
+
+    .confirm-check-wrap {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 28px;
+    }
+
+    .confirm-check-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid rgba(201,169,110,0.2);
+      animation: ringPulse 2s ease-out 0.8s infinite;
+    }
+
+    @keyframes ringPulse {
+      0%   { transform: scale(1); opacity: 0.6; }
+      100% { transform: scale(1.6); opacity: 0; }
     }
 
     .confirm-check {
-      width: 80px;
-      height: 80px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--success), #2ecc71);
+      background: linear-gradient(135deg, #1a3a52 0%, #24506e 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 24px;
-      font-size: 2.5rem;
-      color: var(--white);
-      animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 8px 28px rgba(26,58,82,0.25);
+      animation: checkCirclePop 0.55s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.1s both;
     }
 
-    @keyframes pop {
-      0% { transform: scale(0); }
-      100% { transform: scale(1); }
+    @keyframes checkCirclePop {
+      0%   { transform: scale(0); opacity: 0; }
+      60%  { transform: scale(1.12); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .confirm-check svg {
+      width: 42px;
+      height: 42px;
+      animation: checkDraw 0.4s ease-out 0.5s both;
+    }
+
+    @keyframes checkDraw {
+      from { opacity: 0; transform: scale(0.5); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    /* Gold accent star-burst dots */
+    .confirm-dots {
+      position: absolute;
+      inset: -20px;
+      pointer-events: none;
+    }
+
+    .confirm-dots span {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--rsvp-gold, #c9a96e);
+      animation: dotFly 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.55s both;
+      opacity: 0;
+    }
+
+    .confirm-dots span:nth-child(1)  { top: 10%;  left: 50%;  --dx: 0px;    --dy: -30px; }
+    .confirm-dots span:nth-child(2)  { top: 25%;  left: 85%;  --dx: 22px;   --dy: -22px; }
+    .confirm-dots span:nth-child(3)  { top: 50%;  left: 95%;  --dx: 28px;   --dy: 0px; }
+    .confirm-dots span:nth-child(4)  { top: 75%;  left: 85%;  --dx: 22px;   --dy: 22px; }
+    .confirm-dots span:nth-child(5)  { top: 90%;  left: 50%;  --dx: 0px;    --dy: 28px; }
+    .confirm-dots span:nth-child(6)  { top: 75%;  left: 15%;  --dx: -22px;  --dy: 22px; }
+    .confirm-dots span:nth-child(7)  { top: 50%;  left: 5%;   --dx: -28px;  --dy: 0px; }
+    .confirm-dots span:nth-child(8)  { top: 25%;  left: 15%;  --dx: -22px;  --dy: -22px; }
+
+    @keyframes dotFly {
+      0%   { transform: translate(0, 0) scale(0); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(1); opacity: 0; }
+    }
+
+    /* ── Text Content ─── */
+
+    .confirm-eyebrow {
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--rsvp-gold, #c9a96e);
+      margin-bottom: 10px;
+      animation: fadeInUp 0.4s 0.6s both;
     }
 
     .confirm-card h1 {
-      font-size: 1.8rem;
-      color: var(--navy);
+      font-family: var(--font-display, 'Cormorant Garamond', serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--rsvp-navy, #1a3a52);
       margin-bottom: 8px;
+      letter-spacing: -0.3px;
+      animation: fadeInUp 0.4s 0.65s both;
     }
 
     .confirm-card .subtitle {
-      color: var(--text-light);
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      color: #8a8278;
       font-size: 1rem;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
+      line-height: 1.6;
+      animation: fadeInUp 0.4s 0.7s both;
     }
 
+    /* ── Details Box ─── */
+
     .confirm-detail {
-      background: var(--light-gray);
-      border-radius: var(--radius-md);
-      padding: 20px;
-      margin-bottom: 24px;
+      background: #faf8f5;
+      border-radius: 14px;
+      border: 1px solid #e8e4de;
+      padding: 22px 24px;
+      margin-bottom: 20px;
       text-align: left;
+      animation: fadeInUp 0.4s 0.75s both;
     }
 
     .confirm-detail p {
-      margin-bottom: 8px;
-      font-size: 0.95rem;
+      margin-bottom: 10px;
+      font-size: 0.93rem;
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      color: #5a554f;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
     }
 
     .confirm-detail p:last-child {
@@ -75,48 +190,126 @@
     }
 
     .confirm-detail strong {
-      color: var(--navy);
+      color: var(--rsvp-navy, #1a3a52);
+      font-weight: 700;
+      min-width: 80px;
+      flex-shrink: 0;
     }
 
+    /* ── Venue Section ─── */
+
     .confirm-venue {
-      margin-top: 16px;
-      padding-top: 16px;
-      border-top: 1px solid var(--medium-gray);
-      font-size: 0.95rem;
-      color: var(--text-dark);
+      background: var(--rsvp-navy, #1a3a52);
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      text-align: left;
+      animation: fadeInUp 0.4s 0.8s both;
     }
 
     .confirm-venue p {
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+
+    .confirm-venue p:last-child {
+      margin-bottom: 0;
+    }
+
+    .confirm-venue strong {
+      color: var(--rsvp-gold, #c9a96e);
+      font-weight: 700;
+      display: block;
+      font-size: 1rem;
       margin-bottom: 4px;
     }
 
     .confirm-venue a {
-      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: rgba(201,169,110,0.4);
+      font-size: 0.88rem;
+      transition: color 0.2s, text-decoration-color 0.2s;
     }
 
+    .confirm-venue a:hover {
+      color: var(--rsvp-gold, #c9a96e);
+      text-decoration-color: var(--rsvp-gold, #c9a96e);
+    }
+
+    /* ── Receipt Note ─── */
+
     .confirm-receipt-note {
-      color: var(--text-light);
-      font-size: 0.85rem;
-      margin-top: 16px;
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      color: #aaa69f;
+      font-size: 0.82rem;
+      margin-top: 20px;
+      line-height: 1.6;
+      animation: fadeInUp 0.4s 0.85s both;
+    }
+
+    /* ── Shared animation ─── */
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Mobile ─── */
+
+    @media (max-width: 640px) {
+      .confirm-card {
+        padding: 40px 24px 36px;
+        border-radius: 20px;
+      }
+
+      .confirm-card h1 {
+        font-size: 1.8rem;
+      }
+
+      .confirm-detail, .confirm-venue {
+        padding: 18px 18px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="confirm-screen">
     <div class="confirm-card">
-      <div class="confirm-check">&#10003;</div>
-      <h1>You're Registered!</h1>
-      <p class="subtitle">We can't wait to see you there.</p>
+
+      <!-- Animated Checkmark -->
+      <div class="confirm-check-wrap">
+        <div class="confirm-check-ring"></div>
+        <div class="confirm-check">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="confirm-dots" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <p class="confirm-eyebrow">Registration Confirmed</p>
+      <h1>See You There!</h1>
+      <p class="subtitle">Your spot is reserved. We look forward to welcoming you.</p>
 
       <div id="confirm-details" class="confirm-detail">
-        <p>Loading your registration details...</p>
+        <p>Loading your registration details&hellip;</p>
       </div>
 
       <div id="confirm-venue" class="confirm-venue" hidden></div>
 
       <p class="confirm-receipt-note">
-        A payment receipt from Square has been sent to your email.
+        A payment receipt from Square has been sent to your email address.
       </p>
+
     </div>
   </div>
 
@@ -134,7 +327,6 @@
       const regId = params.get('reg');
       const detailsEl = document.getElementById('confirm-details');
 
-      // Load event details for venue info
       try {
         const res = await fetch(`${API}/get-event`);
         const data = await res.json();
@@ -151,47 +343,45 @@
 
           const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.venue_address)}`;
 
-          // Build venue DOM elements programmatically to avoid innerHTML XSS with href
-          const pName = document.createElement('p');
+          // Build venue block
           const strongName = document.createElement('strong');
           strongName.textContent = ev.event_name;
-          pName.appendChild(strongName);
 
           const pDate = document.createElement('p');
           pDate.textContent = eventDate;
 
-          const pVenue = document.createElement('p');
+          const pVenueLink = document.createElement('p');
           const aVenue = document.createElement('a');
           aVenue.href = mapsUrl;
           aVenue.target = '_blank';
           aVenue.rel = 'noopener noreferrer';
           aVenue.textContent = `${ev.venue_name} — ${ev.venue_address}`;
-          pVenue.appendChild(aVenue);
+          pVenueLink.appendChild(aVenue);
 
           venueEl.innerHTML = '';
-          venueEl.appendChild(pName);
+          venueEl.appendChild(strongName);
           venueEl.appendChild(pDate);
-          venueEl.appendChild(pVenue);
+          venueEl.appendChild(pVenueLink);
           venueEl.hidden = false;
 
-          // Build details DOM elements programmatically
+          // Build details block
           const pEvent = document.createElement('p');
-          const strongEvent = document.createElement('strong');
-          strongEvent.textContent = 'Event:';
-          pEvent.appendChild(strongEvent);
+          const sEvent = document.createElement('strong');
+          sEvent.textContent = 'Event:';
+          pEvent.appendChild(sEvent);
           pEvent.appendChild(document.createTextNode(' ' + ev.event_name));
 
           const pEventDate = document.createElement('p');
-          const strongEventDate = document.createElement('strong');
-          strongEventDate.textContent = 'Date:';
-          pEventDate.appendChild(strongEventDate);
+          const sDate = document.createElement('strong');
+          sDate.textContent = 'Date:';
+          pEventDate.appendChild(sDate);
           pEventDate.appendChild(document.createTextNode(' ' + eventDate));
 
           const pAmount = document.createElement('p');
-          const strongAmount = document.createElement('strong');
-          strongAmount.textContent = 'Amount Paid:';
-          pAmount.appendChild(strongAmount);
-          pAmount.appendChild(document.createTextNode(' Check your email for receipt details'));
+          const sAmount = document.createElement('strong');
+          sAmount.textContent = 'Payment:';
+          pAmount.appendChild(sAmount);
+          pAmount.appendChild(document.createTextNode(' Receipt sent to your email'));
 
           detailsEl.innerHTML = '';
           detailsEl.appendChild(pEvent);

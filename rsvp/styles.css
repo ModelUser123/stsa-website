@@ -1,96 +1,203 @@
-/* RSVP Page Styles */
+/* =====================================================
+   RSVP Page — Premium Invitation Aesthetic
+   ===================================================== */
 
-/* Loading */
+/* ── Google Fonts ─────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+/* ── Design Tokens ────────────────────────────────── */
+:root {
+  --rsvp-navy:        #1a3a52;
+  --rsvp-deep-navy:   #0a1628;
+  --rsvp-orange:      #c05621;
+  --rsvp-amber:       #d4a574;
+  --rsvp-gold:        #c9a96e;
+  --rsvp-off-white:   #f8f6f3;
+  --rsvp-cream:       #faf8f5;
+  --rsvp-white:       #ffffff;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* ── Critical State Fix ───────────────────────────── */
+/* Ensures JS hidden attribute overrides any display:flex rules */
+[hidden] { display: none !important; }
+
+/* ── Base Override ────────────────────────────────── */
+body {
+  font-family: var(--font-body);
+  background: var(--rsvp-off-white);
+  color: #2c3e50;
+}
+
+/* =====================================================
+   LOADING SCREEN
+   ===================================================== */
+
 .loading-screen {
   min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: var(--light-gray);
+  background: var(--rsvp-deep-navy);
+  gap: 32px;
+}
+
+.loading-screen::before {
+  content: 'STSA';
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--rsvp-gold);
+  letter-spacing: 6px;
+  animation: fadeInUp 0.6s var(--ease-smooth) both;
 }
 
 .loader {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  animation: fadeInUp 0.6s 0.2s var(--ease-smooth) both;
 }
 
 .loader-dot {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  background: var(--burnt-orange);
-  animation: bounce 0.6s ease-in-out infinite alternate;
+  background: var(--rsvp-gold);
+  opacity: 0.5;
+  animation: pulse-dot 1.2s ease-in-out infinite;
 }
 
 .loader-dot:nth-child(2) { animation-delay: 0.2s; }
 .loader-dot:nth-child(3) { animation-delay: 0.4s; }
 
-@keyframes bounce {
-  to { transform: translateY(-12px); opacity: 0.5; }
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(0.8); opacity: 0.4; }
+  50%       { transform: scale(1.2); opacity: 1; }
 }
 
-/* No event */
+/* =====================================================
+   NO EVENT SCREEN
+   ===================================================== */
+
 .no-event-screen {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--light-gray);
+  background: var(--rsvp-deep-navy);
+  padding: 24px;
 }
 
 .message-card {
   text-align: center;
-  background: var(--white);
-  padding: 48px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,169,110,0.3);
+  padding: 56px 48px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  max-width: 480px;
+  width: 100%;
 }
 
 .message-card h1 {
-  font-size: 2.5rem;
-  color: var(--navy);
-  letter-spacing: 2px;
-  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--rsvp-gold);
+  letter-spacing: 6px;
+  margin-bottom: 16px;
 }
 
-/* RSVP Page */
+.message-card p {
+  font-family: var(--font-body);
+  color: rgba(255,255,255,0.65);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+/* =====================================================
+   RSVP PAGE SHELL
+   ===================================================== */
+
 .rsvp-page {
   min-height: 100vh;
-  background: var(--light-gray);
+  background: var(--rsvp-off-white);
 }
 
+/* ── Header ──────────────────────────────────────── */
+
 .rsvp-header {
-  background: var(--navy);
-  padding: 16px 0;
+  background: var(--rsvp-deep-navy);
+  padding: 18px 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(201,169,110,0.2);
 }
 
 .brand {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--white);
-  letter-spacing: 2px;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--rsvp-gold);
+  letter-spacing: 5px;
 }
 
-/* Event Hero */
+/* ── Main Container ──────────────────────────────── */
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+/* =====================================================
+   EVENT HERO
+   ===================================================== */
+
 .event-hero {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
-  border-radius: var(--radius-lg);
-  padding: 48px 40px;
-  margin-top: 32px;
-  color: var(--white);
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(201,169,110,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(192,86,33,0.1) 0%, transparent 50%),
+    linear-gradient(160deg, var(--rsvp-deep-navy) 0%, #132237 50%, #0a1628 100%);
+  border-radius: 20px;
+  padding: 52px 44px;
+  margin-top: 36px;
+  color: var(--rsvp-white);
   position: relative;
   overflow: hidden;
+  border: 1px solid rgba(201,169,110,0.2);
+  animation: fadeInUp 0.5s var(--ease-smooth) both;
 }
 
+/* Decorative corner ornament */
 .event-hero::before {
   content: '';
   position: absolute;
-  top: -50%;
-  right: -20%;
-  width: 300px;
-  height: 300px;
-  background: rgba(192, 86, 33, 0.15);
-  border-radius: 50%;
+  top: 0;
+  right: 0;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle at top right, rgba(201,169,110,0.15), transparent 70%);
+  pointer-events: none;
+}
+
+/* Bottom accent line */
+.event-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 44px;
+  right: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,169,110,0.4), transparent);
 }
 
 .event-hero-content {
@@ -98,65 +205,92 @@
 }
 
 .event-label {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 3px;
-  font-weight: 700;
-  color: var(--warm-orange);
-  margin-bottom: 12px;
+  color: var(--rsvp-gold);
+  margin-bottom: 16px;
+  padding: 5px 14px;
+  border: 1px solid rgba(201,169,110,0.35);
+  border-radius: 40px;
 }
 
 .event-title {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 24px;
-  line-height: 1.2;
+  font-family: var(--font-display);
+  font-size: 2.6rem;
+  font-weight: 700;
+  margin-bottom: 28px;
+  line-height: 1.15;
+  color: var(--rsvp-white);
+  letter-spacing: -0.5px;
 }
 
 .event-meta {
   display: flex;
-  flex-wrap: wrap;
-  gap: 24px;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 1rem;
-  font-weight: 500;
+  gap: 12px;
+  font-size: 0.95rem;
+  font-weight: 400;
+  color: rgba(255,255,255,0.85);
+  line-height: 1.4;
 }
 
 .meta-icon {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+  opacity: 0.9;
 }
 
 .meta-item a {
-  color: var(--white);
+  color: rgba(255,255,255,0.85);
   text-decoration: underline;
   text-underline-offset: 3px;
+  text-decoration-color: rgba(201,169,110,0.5);
+  transition: color 0.2s, text-decoration-color 0.2s;
 }
 
 .meta-item a:hover {
-  color: var(--warm-orange);
+  color: var(--rsvp-gold);
+  text-decoration-color: var(--rsvp-gold);
 }
 
-/* Schedule Bar */
+/* =====================================================
+   SCHEDULE BAR
+   ===================================================== */
+
 .schedule-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 0;
-  margin-top: 24px;
-  background: var(--white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
+  margin-top: 20px;
+  background: var(--rsvp-white);
+  border-radius: 16px;
+  border: 1px solid #e8e4de;
   overflow: hidden;
+  box-shadow: 0 2px 12px rgba(10,22,40,0.06);
+  animation: fadeInUp 0.5s 0.1s var(--ease-smooth) both;
 }
 
 .schedule-item {
-  flex: 1;
-  padding: 20px;
+  padding: 22px 16px;
   text-align: center;
-  border-right: 1px solid var(--medium-gray);
+  border-right: 1px solid #ede9e3;
+  transition: background 0.2s;
+}
+
+.schedule-item:hover {
+  background: var(--rsvp-cream);
 }
 
 .schedule-item:last-child {
@@ -165,79 +299,104 @@
 
 .sched-time {
   display: block;
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--burnt-orange);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--rsvp-amber);
+  letter-spacing: -0.3px;
+  margin-bottom: 5px;
 }
 
 .sched-label {
   display: block;
-  font-size: 0.8rem;
-  color: var(--text-light);
+  font-size: 0.72rem;
   font-weight: 600;
-  margin-top: 4px;
+  color: #8a8278;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
-/* Speaker */
+/* =====================================================
+   SPEAKER / GUEST CARDS
+   ===================================================== */
+
 .speaker-section {
-  margin-top: 32px;
+  margin-top: 28px;
+  animation: fadeInUp 0.5s 0.15s var(--ease-smooth) both;
 }
 
 .speaker-section h3 {
-  font-size: 1.1rem;
-  color: var(--navy);
-  margin-bottom: 16px;
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #8a8278;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 2px;
+  margin-bottom: 14px;
 }
 
 .speaker-card {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  padding: 28px;
-  box-shadow: var(--shadow-sm);
+  background: var(--rsvp-white);
+  border-radius: 16px;
+  padding: 28px 28px 28px 36px;
+  border: 1px solid #e8e4de;
+  border-left: 4px solid var(--rsvp-amber);
+  box-shadow: 0 2px 12px rgba(10,22,40,0.05);
+  position: relative;
 }
 
 .speaker-info h4 {
-  font-size: 1.2rem;
-  color: var(--text-dark);
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--rsvp-navy);
+  margin-bottom: 6px;
 }
 
 .speaker-topic {
-  color: var(--burnt-orange);
-  font-weight: 700;
-  margin: 6px 0;
-  font-size: 1rem;
+  font-family: var(--font-body);
+  color: var(--rsvp-orange);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  letter-spacing: 0.2px;
 }
 
 .speaker-bio {
-  color: var(--text-light);
-  font-size: 0.9rem;
-  line-height: 1.6;
+  font-family: var(--font-body);
+  color: #6b6560;
+  font-size: 0.92rem;
+  line-height: 1.7;
 }
 
-/* Registration Form */
+/* =====================================================
+   REGISTRATION FORM
+   ===================================================== */
+
 .reg-section {
-  margin-top: 40px;
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: 40px;
-  box-shadow: var(--shadow-md);
+  margin-top: 32px;
+  background: var(--rsvp-white);
+  border-radius: 20px;
+  padding: 44px;
+  border: 1px solid #e8e4de;
+  box-shadow: 0 4px 24px rgba(10,22,40,0.07);
+  animation: fadeInUp 0.5s 0.2s var(--ease-smooth) both;
 }
 
 .reg-section h3 {
-  font-size: 1.4rem;
-  color: var(--navy);
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--rsvp-navy);
   margin-bottom: 28px;
+  letter-spacing: -0.3px;
 }
 
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px 24px;
-  margin-bottom: 16px;
+  gap: 14px 20px;
+  margin-bottom: 14px;
 }
 
 .form-group {
@@ -246,150 +405,264 @@
 }
 
 .form-group label {
-  font-size: 0.85rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
   font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 6px;
+  color: #6b6560;
+  margin-bottom: 7px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 .form-group input {
-  padding: 14px 18px;
-  border: 2px solid var(--medium-gray);
-  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  padding: 14px 16px;
+  border: 1.5px solid #ddd9d3;
+  border-radius: 10px;
   font-size: 1rem;
-  font-family: var(--font-main);
-  transition: var(--transition);
+  background: var(--rsvp-cream);
+  color: #2c3e50;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  width: 100%;
+}
+
+.form-group input::placeholder {
+  color: #b5b0ab;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--burnt-orange);
-  box-shadow: 0 0 0 3px rgba(192, 86, 33, 0.15);
+  border-color: var(--rsvp-amber);
+  background: var(--rsvp-white);
+  box-shadow: 0 0 0 3px rgba(212,165,116,0.18);
 }
 
-/* Meal Picker */
+/* ── Meal Picker ─────────────────────────────────── */
+
 .meal-picker {
-  margin: 28px 0;
+  margin: 30px 0 24px;
 }
 
 .meal-label {
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 12px;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #6b6560;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
   display: block;
 }
 
 .meal-buttons {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 14px;
 }
 
 .meal-btn {
-  padding: 20px;
-  border: 3px solid var(--medium-gray);
-  border-radius: var(--radius-md);
-  background: var(--white);
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-dark);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 24px 16px;
+  min-height: 100px;
+  border: 2px solid #ddd9d3;
+  border-radius: 14px;
+  background: var(--rsvp-cream);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4a4540;
   text-align: center;
   cursor: pointer;
-  transition: var(--transition);
-  position: relative;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.15s;
+  line-height: 1.3;
+  overflow: hidden;
+}
+
+/* Animated fill-in on hover */
+.meal-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(212,165,116,0.08), rgba(192,86,33,0.06));
+  opacity: 0;
+  transition: opacity 0.2s;
+  border-radius: 12px;
 }
 
 .meal-btn:hover {
-  border-color: var(--burnt-orange);
+  border-color: var(--rsvp-amber);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 6px 20px rgba(212,165,116,0.2);
+}
+
+.meal-btn:hover::before {
+  opacity: 1;
+}
+
+.meal-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Check badge — top-right corner */
+.meal-btn .meal-check {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--rsvp-orange);
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 800;
+  align-items: center;
+  justify-content: center;
+  animation: checkPop 0.25s var(--ease-bounce) both;
+  z-index: 2;
 }
 
 .meal-btn.selected {
-  border-color: var(--burnt-orange);
-  background: linear-gradient(135deg, rgba(192, 86, 33, 0.08), rgba(230, 126, 34, 0.08));
-  color: var(--burnt-orange);
-  box-shadow: 0 0 0 3px rgba(192, 86, 33, 0.15);
+  border-color: var(--rsvp-orange);
+  background: linear-gradient(135deg, rgba(192,86,33,0.07), rgba(212,165,116,0.1));
+  color: var(--rsvp-orange);
+  box-shadow: 0 0 0 3px rgba(192,86,33,0.12), 0 6px 20px rgba(192,86,33,0.12);
+  transform: translateY(-2px);
 }
 
+.meal-btn.selected::before {
+  opacity: 1;
+}
+
+.meal-btn.selected .meal-check {
+  display: flex;
+}
+
+@keyframes checkPop {
+  0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+  70%  { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* Inject checkmark via JS — we add span.meal-check in CSS,
+   but since app.js builds buttons with btn.textContent we
+   handle the check via ::after for the JS-built buttons too */
 .meal-btn.selected::after {
   content: '\2713';
   position: absolute;
-  top: 8px;
-  right: 12px;
-  font-size: 0.8rem;
-  color: var(--burnt-orange);
+  top: 9px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--rsvp-orange);
+  color: white;
+  font-size: 0.7rem;
   font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 22px;
+  text-align: center;
+  animation: checkPop 0.25s var(--ease-bounce) both;
+  z-index: 2;
 }
 
-/* Additional Guests */
+/* ── Additional Guests ───────────────────────────── */
+
 .additional-guests {
   margin: 24px 0;
 }
 
 .btn-secondary {
-  background: var(--white);
-  color: var(--text-dark);
-  padding: 10px 20px;
-  border: 2px solid var(--medium-gray);
-  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  background: var(--rsvp-white);
+  color: var(--rsvp-navy);
+  padding: 11px 20px;
+  border: 1.5px solid #ddd9d3;
+  border-radius: 10px;
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.2s;
 }
 
 .btn-secondary:hover {
-  border-color: var(--navy);
-  color: var(--navy);
+  border-color: var(--rsvp-amber);
+  color: var(--rsvp-orange);
+  background: var(--rsvp-cream);
+  box-shadow: 0 2px 8px rgba(212,165,116,0.15);
 }
 
 .guest-entry {
-  background: var(--light-gray);
-  border-radius: var(--radius-sm);
-  padding: 16px;
-  margin-top: 12px;
+  background: var(--rsvp-cream);
+  border: 1px solid #e8e4de;
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 14px;
   position: relative;
 }
 
 .guest-entry h4 {
-  font-size: 0.9rem;
-  color: var(--navy);
-  margin-bottom: 12px;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--rsvp-navy);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
 }
 
 .remove-guest {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 14px;
+  right: 14px;
   background: none;
-  color: var(--error);
-  font-size: 1.2rem;
-  padding: 4px 8px;
-  font-weight: 700;
-  cursor: pointer;
   border: none;
+  color: #b5b0ab;
+  font-size: 1.3rem;
+  font-weight: 400;
+  padding: 2px 6px;
+  cursor: pointer;
   line-height: 1;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
 }
 
-/* Total */
+.remove-guest:hover {
+  color: #e74c3c;
+  background: #ffeeed;
+}
+
+/* ── Total Bar ───────────────────────────────────── */
+
 .total-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 0;
-  margin: 24px 0;
-  border-top: 2px solid var(--medium-gray);
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: var(--navy);
+  margin: 28px 0 0;
+  border-top: 1.5px solid #e8e4de;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: #6b6560;
 }
 
 .total-amount {
-  font-size: 1.5rem;
-  color: var(--burnt-orange);
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--rsvp-navy);
+  letter-spacing: -1px;
 }
+
+/* ── Pay Button ──────────────────────────────────── */
 
 .btn-full {
   width: 100%;
@@ -397,82 +670,216 @@
 
 .btn-large {
   padding: 18px 32px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
 }
 
 .pay-btn {
-  font-size: 1.2rem;
-  padding: 18px 32px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 20px 32px;
+  letter-spacing: 0.5px;
+  border-radius: 14px;
+  margin-top: 20px;
+  background: linear-gradient(135deg, #c05621 0%, #d4692b 50%, #c9824a 100%);
+  color: var(--rsvp-white);
+  border: none;
+  box-shadow: 0 6px 24px rgba(192,86,33,0.35), 0 2px 6px rgba(192,86,33,0.2);
+  transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth), filter 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
 }
+
+.pay-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.pay-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(192,86,33,0.45), 0 4px 10px rgba(192,86,33,0.25);
+  filter: brightness(1.05);
+}
+
+.pay-btn:hover:not(:disabled)::before {
+  opacity: 1;
+}
+
+.pay-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 4px 14px rgba(192,86,33,0.3);
+}
+
+.pay-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ── Error Text ──────────────────────────────────── */
 
 .error-text {
-  color: var(--error);
+  font-family: var(--font-body);
+  color: #e74c3c;
   font-size: 0.9rem;
-  margin-top: 12px;
+  margin-top: 14px;
   font-weight: 600;
   text-align: center;
+  padding: 12px 16px;
+  background: #fff5f5;
+  border-radius: 10px;
+  border: 1px solid #fcd5d1;
 }
 
-/* Sponsors */
+/* =====================================================
+   SPONSORS
+   ===================================================== */
+
 .sponsors-section {
-  margin-top: 32px;
-  padding: 24px;
-  background: var(--white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  font-size: 0.9rem;
-  color: var(--text-light);
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--rsvp-white);
+  border-radius: 14px;
+  border: 1px solid #e8e4de;
+  font-size: 0.88rem;
+  color: #8a8278;
+  animation: fadeInUp 0.5s 0.25s var(--ease-smooth) both;
 }
 
-/* Footer */
+.sponsors-section strong {
+  color: var(--rsvp-navy);
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
 .rsvp-footer {
   text-align: center;
-  padding: 32px;
-  color: var(--text-light);
-  font-size: 0.85rem;
+  padding: 40px 20px;
+  color: #aaa69f;
+  font-size: 0.8rem;
+  font-family: var(--font-body);
   margin-top: 48px;
+  border-top: 1px solid #e8e4de;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* =====================================================
+   SCROLL ENTRANCE ANIMATIONS
+   ===================================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  to { transform: translateY(-10px); opacity: 0.6; }
+}
+
+/* =====================================================
+   RESPONSIVE — MOBILE FIRST (375px)
+   ===================================================== */
+
+@media (max-width: 640px) {
+
+  .rsvp-header {
+    padding: 14px 0;
+  }
+
+  .brand {
+    font-size: 1.3rem;
+    letter-spacing: 4px;
+  }
+
   .event-hero {
-    padding: 32px 24px;
+    padding: 36px 24px 40px;
     margin-top: 20px;
+    border-radius: 16px;
   }
 
   .event-title {
-    font-size: 1.5rem;
+    font-size: 1.9rem;
   }
 
   .event-meta {
-    flex-direction: column;
     gap: 12px;
   }
 
   .schedule-bar {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    border-radius: 14px;
   }
 
   .schedule-item {
     border-right: none;
-    border-bottom: 1px solid var(--medium-gray);
+    border-bottom: 1px solid #ede9e3;
+    padding: 18px 16px;
   }
 
   .schedule-item:last-child {
     border-bottom: none;
   }
 
+  .reg-section {
+    padding: 28px 20px;
+    border-radius: 16px;
+    margin-top: 24px;
+  }
+
+  .reg-section h3 {
+    font-size: 1.6rem;
+    margin-bottom: 22px;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .meal-buttons {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .reg-section {
-    padding: 24px 20px;
+  .meal-btn {
+    flex-direction: row;
+    justify-content: flex-start;
+    min-height: 64px;
+    padding: 18px 20px;
+    gap: 12px;
+    font-size: 1rem;
+  }
+
+  .total-bar {
+    padding: 16px 0;
+  }
+
+  .total-amount {
+    font-size: 1.7rem;
+  }
+
+  .pay-btn {
+    padding: 18px 24px;
+    font-size: 1rem;
+  }
+
+  .speaker-card {
+    padding: 22px 20px 22px 24px;
+    border-left-width: 3px;
+  }
+
+  .speaker-info h4 {
+    font-size: 1.25rem;
   }
 }
