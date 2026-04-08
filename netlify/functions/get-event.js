@@ -1,5 +1,5 @@
 const { handleCors, jsonResponse } = require('./auth');
-const { getSupabaseClient } = require('./supabase');
+const { getPublicClient } = require('./supabase');
 
 exports.handler = async (event) => {
   const corsResult = handleCors(event);
@@ -10,7 +10,7 @@ exports.handler = async (event) => {
   }
 
   try {
-    const supabase = getSupabaseClient();
+    const supabase = getPublicClient();
     const { data, error } = await supabase
       .from('events')
       .select('*')

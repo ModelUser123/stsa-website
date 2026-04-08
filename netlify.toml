@@ -6,6 +6,11 @@
   NODE_VERSION = "20"
 
 [[redirects]]
+  from = "/"
+  to = "/rsvp/index.html"
+  status = 301
+
+[[redirects]]
   from = "/rsvp"
   to = "/rsvp/index.html"
   status = 200
