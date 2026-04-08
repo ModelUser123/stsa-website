@@ -1,0 +1,11 @@
+{
+  "name": "stsa-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "South Texas Surety Association website with event RSVP system",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0",
+    "bcryptjs": "^3.0.2",
+    "square": "^42.0.0"
+  }
+}

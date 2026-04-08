@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+/* =====================================================
+   STSA Brand Design Tokens
+   ===================================================== */
+
+:root {
+  /* Core Colors */
+  --navy:          #1a3a52;
+  --navy-light:    #24506e;
+  --navy-dark:     #0f2537;
+  --burnt-orange:  #c05621;
+  --warm-orange:   #e67e22;
+  --orange-light:  #f39c12;
+  --white:         #ffffff;
+  --light-gray:    #f7f9fc;
+  --medium-gray:   #e2e8f0;
+  --text-dark:     #2c3e50;
+  --text-light:    #6c757d;
+  --success:       #27ae60;
+  --success-light: #d4edda;
+  --error:         #e74c3c;
+  --error-light:   #f8d7da;
+
+  /* Meal Colors */
+  --meal-1:        #e74c3c;
+  --meal-1-light:  #fadbd8;
+  --meal-2:        #27ae60;
+  --meal-2-light:  #d5f5e3;
+  --meal-3:        #2980b9;
+  --meal-3-light:  #d4e6f1;
+
+  /* Typography */
+  --font-main: 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+
+  /* Border Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+
+  /* Transition */
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =====================================================
+   Base Reset
+   ===================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* =====================================================
+   Body
+   ===================================================== */
+
+body {
+  font-family: var(--font-main);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background-color: var(--light-gray);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =====================================================
+   Links
+   ===================================================== */
+
+a {
+  color: var(--burnt-orange);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--warm-orange);
+  text-decoration: underline;
+}
+
+/* =====================================================
+   Button Base
+   ===================================================== */
+
+button {
+  font-family: var(--font-main);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1.5rem;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   Button Variants
+   ===================================================== */
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--burnt-orange), var(--warm-orange));
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--warm-orange), var(--orange-light));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--success), #2ecc71);
+  color: var(--white);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-success:hover:not(:disabled) {
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   Container
+   ===================================================== */
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  width: 100%;
+}
