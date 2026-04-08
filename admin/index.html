@@ -12,16 +12,16 @@
 </head>
 <body>
 
-  <!-- Login Screen -->
+  <!-- ═══════════════════════════════════════════════════
+       LOGIN SCREEN
+  ═══════════════════════════════════════════════════ -->
   <div id="login-screen" class="login-screen">
-    <!-- Animated mesh background -->
     <div class="login-bg">
       <div class="mesh-orb mesh-orb-1"></div>
       <div class="mesh-orb mesh-orb-2"></div>
       <div class="mesh-orb mesh-orb-3"></div>
       <div class="mesh-grid"></div>
     </div>
-
     <div class="login-card">
       <div class="login-card-accent"></div>
       <div class="login-logo">
@@ -46,7 +46,9 @@
     </div>
   </div>
 
-  <!-- Dashboard (hidden until authenticated) -->
+  <!-- ═══════════════════════════════════════════════════
+       DASHBOARD
+  ═══════════════════════════════════════════════════ -->
   <div id="dashboard" class="dashboard" hidden>
 
     <!-- Header -->
@@ -64,7 +66,7 @@
       </button>
     </header>
 
-    <!-- Tabs -->
+    <!-- Main Tabs -->
     <nav class="tabs">
       <div class="tabs-inner">
         <button class="tab active" data-tab="event-setup">
@@ -75,196 +77,258 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
           Registrations
         </button>
-        <button class="tab" data-tab="activity">
+        <button class="tab" data-tab="activity-payments">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-          Activity
-        </button>
-        <button class="tab" data-tab="square-recon">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          Payments
+          Activity &amp; Payments
         </button>
         <button class="tab" data-tab="print-cards">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print Meal Cards
         </button>
+        <button class="tab" data-tab="analytics">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+          Analytics
+        </button>
         <div class="tab-indicator"></div>
       </div>
     </nav>
 
-    <!-- Tab 1: Event Setup -->
+    <!-- ══════════════════════════════════
+         TAB 1: EVENT SETUP
+    ══════════════════════════════════ -->
     <section id="tab-event-setup" class="tab-content active">
-      <form id="event-form" class="event-form">
 
-        <div class="form-section-card">
-          <div class="form-section-header">
-            <h2>Event Details</h2>
-            <p class="form-section-desc">Core information for the upcoming luncheon</p>
+      <!-- Subtabs -->
+      <div class="subtabs-bar">
+        <button class="subtab active" data-subtab="es-edit">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit
+        </button>
+        <button class="subtab" data-subtab="es-preview">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Preview
+        </button>
+        <button class="subtab" data-subtab="es-history">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="12 8 12 12 14 14"/><path d="M3.05 11a9 9 0 1 0 .5-3.5"/><polyline points="3 4 3 11 10 11"/></svg>
+          History
+        </button>
+      </div>
+
+      <!-- SUBTAB: Edit -->
+      <div id="subtab-es-edit" class="subtab-content active">
+        <form id="event-form" class="event-form">
+
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <h2>Event Details</h2>
+              <p class="form-section-desc">Core information for the upcoming luncheon</p>
+            </div>
+            <div class="form-grid">
+              <div class="form-group full-width">
+                <label for="event_name">Event Name</label>
+                <input type="text" id="event_name" name="event_name" placeholder="May Luncheon" required>
+              </div>
+              <div class="form-group">
+                <label for="event_date">Event Date</label>
+                <input type="date" id="event_date" name="event_date" required>
+              </div>
+              <div class="form-group">
+                <label for="rsvp_deadline">RSVP Deadline</label>
+                <input type="date" id="rsvp_deadline" name="rsvp_deadline" required>
+              </div>
+              <div class="form-group">
+                <label for="time_registration">Registration / Networking</label>
+                <input type="time" id="time_registration" name="time_registration" value="11:00" required>
+              </div>
+              <div class="form-group">
+                <label for="time_lunch">Lunch Begins</label>
+                <input type="time" id="time_lunch" name="time_lunch" value="11:30" required>
+              </div>
+              <div class="form-group">
+                <label for="time_meeting_start">Meeting Starts</label>
+                <input type="time" id="time_meeting_start" name="time_meeting_start" value="12:00" required>
+              </div>
+              <div class="form-group">
+                <label for="time_meeting_end">Meeting Ends</label>
+                <input type="time" id="time_meeting_end" name="time_meeting_end" value="13:00" required>
+              </div>
+              <div class="form-group">
+                <label for="venue_name">Venue Name</label>
+                <input type="text" id="venue_name" name="venue_name" placeholder="The Barn Door" required>
+              </div>
+              <div class="form-group">
+                <label for="venue_address">Venue Address</label>
+                <input type="text" id="venue_address" name="venue_address" placeholder="8400 N. New Braunfels Ave, San Antonio, TX 78209" required>
+              </div>
+              <div class="form-group">
+                <label for="price_per_person">Price Per Person ($)</label>
+                <input type="number" id="price_per_person" name="price_per_person" value="40" min="0" required>
+              </div>
+            </div>
           </div>
-          <div class="form-grid">
-            <div class="form-group full-width">
-              <label for="event_name">Event Name</label>
-              <input type="text" id="event_name" name="event_name" placeholder="May Luncheon" required>
+
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <h2 class="section-divider">Meal Choices</h2>
+              <p class="form-section-desc">Define the three meal options for attendees</p>
             </div>
-            <div class="form-group">
-              <label for="event_date">Event Date</label>
-              <input type="date" id="event_date" name="event_date" required>
-            </div>
-            <div class="form-group">
-              <label for="rsvp_deadline">RSVP Deadline</label>
-              <input type="date" id="rsvp_deadline" name="rsvp_deadline" required>
-            </div>
-            <div class="form-group">
-              <label for="time_registration">Registration / Networking</label>
-              <input type="time" id="time_registration" name="time_registration" value="11:00" required>
-            </div>
-            <div class="form-group">
-              <label for="time_lunch">Lunch Begins</label>
-              <input type="time" id="time_lunch" name="time_lunch" value="11:30" required>
-            </div>
-            <div class="form-group">
-              <label for="time_meeting_start">Meeting Starts</label>
-              <input type="time" id="time_meeting_start" name="time_meeting_start" value="12:00" required>
-            </div>
-            <div class="form-group">
-              <label for="time_meeting_end">Meeting Ends</label>
-              <input type="time" id="time_meeting_end" name="time_meeting_end" value="13:00" required>
-            </div>
-            <div class="form-group">
-              <label for="venue_name">Venue Name</label>
-              <input type="text" id="venue_name" name="venue_name" placeholder="The Barn Door" required>
-            </div>
-            <div class="form-group">
-              <label for="venue_address">Venue Address</label>
-              <input type="text" id="venue_address" name="venue_address" placeholder="8400 N. New Braunfels Ave, San Antonio, TX 78209" required>
-            </div>
-            <div class="form-group">
-              <label for="price_per_person">Price Per Person ($)</label>
-              <input type="number" id="price_per_person" name="price_per_person" value="40" min="0" required>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="meal_choice_1">Meal Choice 1 <span class="meal-dot" style="background:var(--meal-1)"></span></label>
+                <input type="text" id="meal_choice_1" name="meal_choice_1" placeholder="Steak" required>
+              </div>
+              <div class="form-group">
+                <label for="meal_choice_2">Meal Choice 2 <span class="meal-dot" style="background:var(--meal-2)"></span></label>
+                <input type="text" id="meal_choice_2" name="meal_choice_2" placeholder="Chicken" required>
+              </div>
+              <div class="form-group">
+                <label for="meal_choice_3">Meal Choice 3 <span class="meal-dot" style="background:var(--meal-3)"></span></label>
+                <input type="text" id="meal_choice_3" name="meal_choice_3" placeholder="Fish" required>
+              </div>
             </div>
           </div>
+
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <h2 class="section-divider">Speaker</h2>
+              <p class="form-section-desc">Featured speaker details for the event program</p>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="speaker_name">Speaker Name</label>
+                <input type="text" id="speaker_name" name="speaker_name" placeholder="John Smith">
+              </div>
+              <div class="form-group">
+                <label for="topic">Topic</label>
+                <input type="text" id="topic" name="topic" placeholder="AI in Construction &amp; Surety">
+              </div>
+              <div class="form-group full-width">
+                <label for="speaker_bio">Speaker Title / Bio</label>
+                <textarea id="speaker_bio" name="speaker_bio" rows="3" placeholder="Director of Engineering, City of San Antonio..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <h2 class="section-divider">Special Guest <span class="optional-tag">Optional</span></h2>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="guest_name">Guest Name</label>
+                <input type="text" id="guest_name" name="guest_name" placeholder="">
+              </div>
+              <div class="form-group full-width">
+                <label for="guest_bio">Guest Bio</label>
+                <textarea id="guest_bio" name="guest_bio" rows="3" placeholder=""></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section-card">
+            <div class="form-section-header">
+              <h2 class="section-divider">Sponsors <span class="optional-tag">Optional</span></h2>
+              <p class="form-section-desc">Sponsors will be recognized in event materials</p>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="speaker_sponsor_name">Speaker Sponsor Name</label>
+                <input type="text" id="speaker_sponsor_name" name="speaker_sponsor_name">
+              </div>
+              <div class="form-group">
+                <label for="speaker_sponsor_company">Speaker Sponsor Company</label>
+                <input type="text" id="speaker_sponsor_company" name="speaker_sponsor_company">
+              </div>
+              <div class="form-group">
+                <label for="speaker_sponsor_email">Speaker Sponsor Email</label>
+                <input type="email" id="speaker_sponsor_email" name="speaker_sponsor_email">
+              </div>
+              <div class="form-group">
+                <label for="luncheon_sponsor_name">Luncheon Sponsor Name</label>
+                <input type="text" id="luncheon_sponsor_name" name="luncheon_sponsor_name">
+              </div>
+              <div class="form-group">
+                <label for="luncheon_sponsor_company">Luncheon Sponsor Company</label>
+                <input type="text" id="luncheon_sponsor_company" name="luncheon_sponsor_company">
+              </div>
+              <div class="form-group">
+                <label for="luncheon_sponsor_website">Luncheon Sponsor Website</label>
+                <input type="url" id="luncheon_sponsor_website" name="luncheon_sponsor_website">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-success btn-full btn-large">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Save &amp; Publish Event
+            </button>
+          </div>
+          <p id="save-status" class="status-text" hidden></p>
+        </form>
+      </div><!-- /#subtab-es-edit -->
+
+      <!-- SUBTAB: Preview -->
+      <div id="subtab-es-preview" class="subtab-content" hidden>
+        <div class="preview-notice">
+          📋 This is a preview — click <strong>Save &amp; Publish</strong> to make it live
         </div>
+        <div id="event-preview-wrap" class="event-preview-wrap"></div>
+      </div><!-- /#subtab-es-preview -->
 
-        <div class="form-section-card">
-          <div class="form-section-header">
-            <h2 class="section-divider">Meal Choices</h2>
-            <p class="form-section-desc">Define the three meal options for attendees</p>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="meal_choice_1">Meal Choice 1 <span class="meal-dot" style="background:var(--meal-1)"></span></label>
-              <input type="text" id="meal_choice_1" name="meal_choice_1" placeholder="Steak" required>
-            </div>
-            <div class="form-group">
-              <label for="meal_choice_2">Meal Choice 2 <span class="meal-dot" style="background:var(--meal-2)"></span></label>
-              <input type="text" id="meal_choice_2" name="meal_choice_2" placeholder="Chicken" required>
-            </div>
-            <div class="form-group">
-              <label for="meal_choice_3">Meal Choice 3 <span class="meal-dot" style="background:var(--meal-3)"></span></label>
-              <input type="text" id="meal_choice_3" name="meal_choice_3" placeholder="Fish" required>
-            </div>
-          </div>
+      <!-- SUBTAB: History -->
+      <div id="subtab-es-history" class="subtab-content" hidden>
+        <div class="history-header">
+          <h2>Past Events</h2>
+          <p class="history-sub">All previous luncheons with attendance and revenue data. Click any row to see details.</p>
         </div>
-
-        <div class="form-section-card">
-          <div class="form-section-header">
-            <h2 class="section-divider">Speaker</h2>
-            <p class="form-section-desc">Featured speaker details for the event program</p>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="speaker_name">Speaker Name</label>
-              <input type="text" id="speaker_name" name="speaker_name" placeholder="John Smith">
-            </div>
-            <div class="form-group">
-              <label for="topic">Topic</label>
-              <input type="text" id="topic" name="topic" placeholder="AI in Construction &amp; Surety">
-            </div>
-            <div class="form-group full-width">
-              <label for="speaker_bio">Speaker Title / Bio</label>
-              <textarea id="speaker_bio" name="speaker_bio" rows="3" placeholder="Director of Engineering, City of San Antonio..."></textarea>
-            </div>
-          </div>
+        <div id="history-loading" class="history-loading">
+          <span class="loading-dots"><span>.</span><span>.</span><span>.</span></span> Loading event history…
         </div>
-
-        <div class="form-section-card">
-          <div class="form-section-header">
-            <h2 class="section-divider">Special Guest <span class="optional-tag">Optional</span></h2>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="guest_name">Guest Name</label>
-              <input type="text" id="guest_name" name="guest_name" placeholder="">
-            </div>
-            <div class="form-group full-width">
-              <label for="guest_bio">Guest Bio</label>
-              <textarea id="guest_bio" name="guest_bio" rows="3" placeholder=""></textarea>
-            </div>
-          </div>
+        <div id="history-table-wrap" class="table-wrap" hidden>
+          <table id="history-table">
+            <thead>
+              <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Registered</th>
+                <th>Paid</th>
+                <th>Revenue</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
         </div>
+        <div id="history-detail-panel" class="history-detail-panel" hidden></div>
+        <p id="history-empty" class="history-empty" hidden>No events found.</p>
+      </div><!-- /#subtab-es-history -->
 
-        <div class="form-section-card">
-          <div class="form-section-header">
-            <h2 class="section-divider">Sponsors <span class="optional-tag">Optional</span></h2>
-            <p class="form-section-desc">Sponsors will be recognized in event materials</p>
-          </div>
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="speaker_sponsor_name">Speaker Sponsor Name</label>
-              <input type="text" id="speaker_sponsor_name" name="speaker_sponsor_name">
-            </div>
-            <div class="form-group">
-              <label for="speaker_sponsor_company">Speaker Sponsor Company</label>
-              <input type="text" id="speaker_sponsor_company" name="speaker_sponsor_company">
-            </div>
-            <div class="form-group">
-              <label for="speaker_sponsor_email">Speaker Sponsor Email</label>
-              <input type="email" id="speaker_sponsor_email" name="speaker_sponsor_email">
-            </div>
-            <div class="form-group">
-              <label for="luncheon_sponsor_name">Luncheon Sponsor Name</label>
-              <input type="text" id="luncheon_sponsor_name" name="luncheon_sponsor_name">
-            </div>
-            <div class="form-group">
-              <label for="luncheon_sponsor_company">Luncheon Sponsor Company</label>
-              <input type="text" id="luncheon_sponsor_company" name="luncheon_sponsor_company">
-            </div>
-            <div class="form-group">
-              <label for="luncheon_sponsor_website">Luncheon Sponsor Website</label>
-              <input type="url" id="luncheon_sponsor_website" name="luncheon_sponsor_website">
-            </div>
-          </div>
-        </div>
+    </section><!-- /#tab-event-setup -->
 
-        <div class="form-actions">
-          <button type="submit" class="btn-success btn-full btn-large">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Save &amp; Publish Event
-          </button>
-        </div>
-        <p id="save-status" class="status-text" hidden></p>
-      </form>
-    </section>
-
-    <!-- Tab 2: Registrations -->
+    <!-- ══════════════════════════════════
+         TAB 2: REGISTRATIONS
+    ══════════════════════════════════ -->
     <section id="tab-registrations" class="tab-content" hidden>
+
       <div class="reg-header">
         <div>
           <h2>Registrations</h2>
-          <p class="reg-header-sub">Manage attendee list and walk-ins</p>
+          <p class="reg-header-sub" id="reg-event-context">Loading event…</p>
         </div>
         <div class="reg-actions">
           <button id="add-walkin-btn" class="btn-primary">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Walk-in
           </button>
-          <button id="export-csv-btn" class="btn-secondary">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Export CSV
+          <button id="manual-refresh-btn" class="btn-refresh">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            Refresh
           </button>
         </div>
       </div>
 
-      <!-- Enhanced Summary Bar -->
+      <!-- Summary Stats (always visible) -->
       <div id="reg-summary" class="reg-summary">
         <div class="summary-stats">
           <div class="stat-card stat-total">
@@ -287,29 +351,84 @@
         <div id="meal-breakdown" class="meal-breakdown"></div>
       </div>
 
-      <div class="reg-table-controls">
-        <span class="auto-refresh-label">&#x1F504; Auto-refreshes every 30s</span>
-        <button id="manual-refresh-btn" class="btn-refresh">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-          Refresh Now
+      <!-- Subtabs -->
+      <div class="subtabs-bar">
+        <button class="subtab active" data-subtab="reg-all">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          All Registrations
+        </button>
+        <button class="subtab" data-subtab="reg-walkins">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21l1.5-6 2.5 2.5 5-5 2.5 2.5 1.5-3"/></svg>
+          Walk-ins
+        </button>
+        <button class="subtab" data-subtab="reg-export">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export
         </button>
       </div>
 
-      <div id="reg-table-wrap" class="table-wrap">
-        <table id="reg-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Meal</th>
-              <th>Status</th>
-              <th>Date</th>
-              <th>Payment</th>
-            </tr>
-          </thead>
-          <tbody id="reg-tbody"></tbody>
-        </table>
+      <!-- SUBTAB: All Registrations -->
+      <div id="subtab-reg-all" class="subtab-content active">
+        <div class="reg-table-controls">
+          <span class="auto-refresh-label">&#x1F504; Auto-refreshes every 30s</span>
+        </div>
+        <div id="reg-table-wrap" class="table-wrap">
+          <table id="reg-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Meal</th>
+                <th>Status</th>
+                <th>Date</th>
+                <th>Payment</th>
+              </tr>
+            </thead>
+            <tbody id="reg-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUBTAB: Walk-ins -->
+      <div id="subtab-reg-walkins" class="subtab-content" hidden>
+        <div class="walkin-subtab-note">
+          Walk-in guests are added on event day. They appear here and in the full list above.
+        </div>
+        <div class="table-wrap">
+          <table id="walkin-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Meal</th>
+                <th>Added</th>
+                <th>Payment</th>
+              </tr>
+            </thead>
+            <tbody id="walkin-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SUBTAB: Export -->
+      <div id="subtab-reg-export" class="subtab-content" hidden>
+        <div class="export-panel">
+          <div class="export-panel-icon">📥</div>
+          <h3>Export Registrations</h3>
+          <p id="export-event-name" class="export-event-name">—</p>
+          <p class="export-desc">Download the complete attendee list as a CSV file. Opens in Excel, Google Sheets, or any spreadsheet app.</p>
+          <div class="export-stats-row">
+            <span class="export-stat"><strong id="export-stat-total">0</strong> Total</span>
+            <span class="export-stat"><strong id="export-stat-paid">0</strong> Paid</span>
+            <span class="export-stat"><strong id="export-stat-walkin">0</strong> Walk-ins</span>
+          </div>
+          <button id="export-csv-btn" class="btn-primary btn-export">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download CSV
+          </button>
+          <p class="export-note">File will be named <span id="export-filename-preview">stsa-registrations-YYYY-MM-DD.csv</span></p>
+        </div>
       </div>
 
       <!-- Walk-in Modal -->
@@ -334,7 +453,7 @@
             <div class="form-group">
               <label for="walkin-meal">Meal Choice</label>
               <select id="walkin-meal" required>
-                <option value="">Select...</option>
+                <option value="">Select…</option>
               </select>
             </div>
             <div class="modal-actions">
@@ -346,55 +465,74 @@
           </form>
         </div>
       </div>
-    </section>
 
-    <!-- Tab 3: Activity Log -->
-    <section id="tab-activity" class="tab-content" hidden>
-      <div class="activity-header">
+    </section><!-- /#tab-registrations -->
+
+    <!-- ══════════════════════════════════
+         TAB 3: ACTIVITY & PAYMENTS
+    ══════════════════════════════════ -->
+    <section id="tab-activity-payments" class="tab-content" hidden>
+
+      <div class="ap-header">
         <div>
-          <h2>Activity Log</h2>
-          <p class="activity-header-sub">Chronological feed of registrations and payments</p>
+          <h2>Activity &amp; Payments</h2>
+          <p class="ap-header-sub" id="ap-event-context">Loading event…</p>
         </div>
-        <button id="activity-refresh-btn" class="btn-refresh">
+        <button id="ap-refresh-btn" class="btn-refresh">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
           Refresh
         </button>
       </div>
-      <div id="activity-feed" class="activity-feed">
-        <p class="activity-empty">Loading activity...</p>
-      </div>
-    </section>
 
-    <!-- Tab 4: Square Reconciliation -->
-    <section id="tab-square-recon" class="tab-content" hidden>
-      <div class="recon-header">
-        <div>
-          <h2>Payment Reconciliation</h2>
-          <p class="recon-header-sub">All registrations with Square transaction details</p>
+      <!-- Subtabs -->
+      <div class="subtabs-bar">
+        <button class="subtab active" data-subtab="ap-activity">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Activity Log
+        </button>
+        <button class="subtab" data-subtab="ap-payments">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Payment Reconciliation
+        </button>
+      </div>
+
+      <!-- SUBTAB: Activity Log -->
+      <div id="subtab-ap-activity" class="subtab-content active">
+        <p class="subtab-desc">Chronological feed of registrations and payments — most recent first.</p>
+        <div id="activity-feed" class="activity-feed">
+          <p class="activity-empty">Loading activity…</p>
         </div>
       </div>
-      <div id="recon-table-wrap" class="table-wrap">
-        <table id="recon-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Amount</th>
-              <th>Square Transaction ID</th>
-              <th>Payment Status</th>
-              <th>Date</th>
-            </tr>
-          </thead>
-          <tbody id="recon-tbody"></tbody>
-        </table>
-      </div>
-    </section>
 
-    <!-- Tab 5: Print Meal Cards -->
+      <!-- SUBTAB: Payment Reconciliation -->
+      <div id="subtab-ap-payments" class="subtab-content" hidden>
+        <p class="subtab-desc">All registrations with Square transaction details for reconciliation.</p>
+        <div id="recon-table-wrap" class="table-wrap">
+          <table id="recon-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Square Transaction ID</th>
+                <th>Payment Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="recon-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section><!-- /#tab-activity-payments -->
+
+    <!-- ══════════════════════════════════
+         TAB 4: PRINT MEAL CARDS
+    ══════════════════════════════════ -->
     <section id="tab-print-cards" class="tab-content" hidden>
       <div class="print-header">
         <div>
           <h2>Meal Cards</h2>
-          <p class="print-header-sub">Preview and print place cards for all attendees</p>
+          <p class="print-header-sub" id="print-event-context">Loading…</p>
         </div>
         <button id="print-btn" class="btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -402,7 +540,68 @@
         </button>
       </div>
       <div id="cards-preview" class="cards-grid"></div>
-    </section>
+    </section><!-- /#tab-print-cards -->
+
+    <!-- ══════════════════════════════════
+         TAB 5: ANALYTICS
+    ══════════════════════════════════ -->
+    <section id="tab-analytics" class="tab-content" hidden>
+
+      <div class="analytics-header">
+        <div>
+          <h2>Analytics</h2>
+          <p class="analytics-sub" id="analytics-event-context">Loading event data…</p>
+        </div>
+        <button id="analytics-refresh-btn" class="btn-refresh">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Refresh
+        </button>
+      </div>
+
+      <!-- Current Event Summary Cards -->
+      <div class="analytics-section-label">Current Event Summary</div>
+      <div id="analytics-summary-cards" class="analytics-summary-cards">
+        <div class="analytics-card analytics-card-blue">
+          <div class="ac-num" id="ac-total">—</div>
+          <div class="ac-label">Total Registered</div>
+        </div>
+        <div class="analytics-card analytics-card-green">
+          <div class="ac-num" id="ac-paid">—</div>
+          <div class="ac-label">Confirmed Paid</div>
+        </div>
+        <div class="analytics-card analytics-card-orange">
+          <div class="ac-num" id="ac-revenue">—</div>
+          <div class="ac-label">Revenue (Paid)</div>
+        </div>
+        <div class="analytics-card analytics-card-amber">
+          <div class="ac-num" id="ac-walkin">—</div>
+          <div class="ac-label">Walk-ins</div>
+        </div>
+      </div>
+
+      <!-- Two-column: Meal Breakdown + Payment Status -->
+      <div class="analytics-two-col">
+        <div class="analytics-panel">
+          <div class="analytics-panel-title">🍽️ Meal Breakdown</div>
+          <div id="analytics-meals" class="analytics-meals">
+            <p class="analytics-empty-msg">No registrations yet.</p>
+          </div>
+        </div>
+        <div class="analytics-panel">
+          <div class="analytics-panel-title">💳 Payment Status</div>
+          <div id="analytics-payments" class="analytics-payments">
+            <p class="analytics-empty-msg">No registrations yet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Event History Timeline -->
+      <div class="analytics-section-label" style="margin-top:32px">All Events — History &amp; Trend</div>
+      <div id="analytics-timeline" class="analytics-timeline">
+        <p class="analytics-empty-msg" style="padding:32px;text-align:center">Loading event history…</p>
+      </div>
+
+    </section><!-- /#tab-analytics -->
 
   </div><!-- /#dashboard -->
 
