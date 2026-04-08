@@ -1,5 +1,3 @@
-const bcrypt = require('bcryptjs');
-
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type, X-Admin-Token',
@@ -14,13 +12,13 @@ function unauthorized() {
   };
 }
 
-async function verifyAdminToken(event) {
+function verifyAdminToken(event) {
   const token = event.headers['x-admin-token'] || event.headers['X-Admin-Token'];
-  const hash = process.env.ADMIN_PASSWORD_HASH;
-  if (!token || !hash) {
+  const password = process.env.ADMIN_PASSWORD;
+  if (!token || !password) {
     return false;
   }
-  return bcrypt.compare(token, hash);
+  return token === password;
 }
 
 function handleCors(event) {
