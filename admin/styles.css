@@ -1177,3 +1177,358 @@ tbody tr:hover td {
     gap: 8px;
   }
 }
+
+/* =====================================================
+   ENHANCED SUMMARY BAR (Big Numbers)
+   ===================================================== */
+
+.reg-summary {
+  background: transparent !important;
+  padding: 0 !important;
+  margin-bottom: 0 !important;
+  font-size: unset !important;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.stat-card {
+  background: var(--board-white);
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-align: center;
+  border: 1.5px solid #e8e4de;
+  box-shadow: 0 2px 12px rgba(10,22,40,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(10,22,40,0.1);
+}
+
+.stat-num {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #8a8278;
+}
+
+.stat-total  .stat-num { color: var(--board-navy); }
+.stat-paid   .stat-num { color: #2ecc71; }
+.stat-pending .stat-num { color: var(--board-burnt); }
+.stat-walkin .stat-num { color: var(--board-amber); }
+
+.stat-total  { border-top: 3px solid var(--board-navy); }
+.stat-paid   { border-top: 3px solid #2ecc71; }
+.stat-pending { border-top: 3px solid var(--board-burnt); }
+.stat-walkin { border-top: 3px solid var(--board-amber); }
+
+/* ── Meal Breakdown ── */
+
+.meal-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--board-white);
+  border-radius: 16px;
+  padding: 18px 20px;
+  border: 1.5px solid #e8e4de;
+  box-shadow: 0 2px 12px rgba(10,22,40,0.06);
+  margin-bottom: 18px;
+}
+
+.meal-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.meal-stat-bar-wrap {
+  height: 8px;
+  background: #f0ece6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.meal-stat-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.meal-stat-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.meal-stat-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.meal-stat-count {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #4a4540;
+}
+
+.meal-stat-pct {
+  color: #8a8278;
+  font-weight: 400;
+}
+
+/* ── Table Controls ── */
+
+.reg-table-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 2px;
+}
+
+.auto-refresh-label {
+  font-size: 0.78rem;
+  color: #8a8278;
+  font-weight: 500;
+}
+
+.btn-refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--board-white);
+  color: var(--board-navy);
+  border: 1.5px solid #ddd9d3;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.btn-refresh:hover {
+  border-color: var(--board-burnt);
+  color: var(--board-burnt);
+  background: #fff8f5;
+}
+
+/* ── Payment Override Buttons ── */
+
+.btn-override {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.18s;
+  white-space: nowrap;
+}
+
+.btn-mark-paid {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.btn-mark-paid:hover {
+  background: #2ecc71;
+  color: white;
+  border-color: #2ecc71;
+}
+
+.btn-mark-pending {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeeba;
+}
+
+.btn-mark-pending:hover {
+  background: var(--board-burnt);
+  color: white;
+  border-color: var(--board-burnt);
+}
+
+.btn-override:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   ACTIVITY LOG
+   ===================================================== */
+
+.activity-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.activity-header h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--board-navy);
+  margin-bottom: 4px;
+}
+
+.activity-header-sub {
+  font-size: 0.88rem;
+  color: #8a8278;
+}
+
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--board-white);
+  border-radius: 14px;
+  padding: 16px 20px;
+  border: 1px solid #e8e4de;
+  box-shadow: 0 2px 8px rgba(10,22,40,0.05);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.activity-item:hover {
+  transform: translateX(3px);
+  box-shadow: 0 4px 16px rgba(10,22,40,0.08);
+}
+
+.activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.activity-badge-paid    { background: #d4edda; }
+.activity-badge-pending { background: #fff3cd; }
+.activity-badge-walkin  { background: #d1ecf1; }
+
+.activity-body {
+  flex: 1;
+}
+
+.activity-msg {
+  font-size: 0.95rem;
+  color: #2c3e50;
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+
+.activity-msg strong {
+  color: var(--board-navy);
+}
+
+.activity-time {
+  font-size: 0.78rem;
+  color: #8a8278;
+  font-weight: 500;
+}
+
+.activity-empty {
+  color: #8a8278;
+  font-size: 0.95rem;
+  padding: 32px;
+  text-align: center;
+}
+
+/* =====================================================
+   SQUARE RECONCILIATION
+   ===================================================== */
+
+.recon-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.recon-header h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--board-navy);
+  margin-bottom: 4px;
+}
+
+.recon-header-sub {
+  font-size: 0.88rem;
+  color: #8a8278;
+}
+
+#recon-table .tx-id {
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.78rem;
+  color: #6b6560;
+  word-break: break-all;
+  max-width: 220px;
+}
+
+/* =====================================================
+   RESPONSIVE OVERRIDES FOR NEW SECTIONS
+   ===================================================== */
+
+@media (max-width: 768px) {
+  .summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-num {
+    font-size: 2.2rem;
+  }
+
+  .activity-header,
+  .recon-header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .reg-table-controls {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .summary-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .stat-num {
+    font-size: 1.9rem;
+  }
+}

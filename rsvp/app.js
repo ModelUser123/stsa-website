@@ -296,6 +296,51 @@ document.getElementById('rsvp-form').addEventListener('submit', async (e) => {
   }
 });
 
+// ─── Smooth Scroll for Hero CTA ──────────────────────
+
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href^="#"]');
+  if (!link) return;
+  const targetId = link.getAttribute('href').slice(1);
+  const target = document.getElementById(targetId);
+  if (target) {
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+});
+
+// ─── Sticky Mobile Register Button ───────────────────
+
+(function initStickyRegister() {
+  const stickyBtn = document.getElementById('sticky-register');
+  if (!stickyBtn) return;
+
+  let heroVisible = true;
+
+  function updateSticky() {
+    const heroBtn = document.getElementById('hero-rsvp-btn');
+    const regSection = document.getElementById('registration-section');
+    if (!heroBtn || !regSection) return;
+
+    const heroBtnRect = heroBtn.getBoundingClientRect();
+    const regRect = regSection.getBoundingClientRect();
+
+    // Show sticky button when hero button is scrolled out of view
+    // and we haven't passed the registration form
+    const heroBtnGone = heroBtnRect.bottom < 0;
+    const regVisible = regRect.top < window.innerHeight * 0.8;
+
+    if (heroBtnGone && !regVisible) {
+      stickyBtn.hidden = false;
+    } else {
+      stickyBtn.hidden = true;
+    }
+  }
+
+  window.addEventListener('scroll', updateSticky, { passive: true });
+  window.addEventListener('resize', updateSticky, { passive: true });
+})();
+
 // ─── Init ────────────────────────────────────────────
 
 init();

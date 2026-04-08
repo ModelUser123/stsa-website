@@ -23,6 +23,11 @@
   --ease-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+/* ── Smooth Scroll ─────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
 /* ── Critical State Fix ───────────────────────────── */
 /* Ensures JS hidden attribute overrides any display:flex rules */
 [hidden] { display: none !important; }
@@ -263,6 +268,120 @@ body {
 .meta-item a:hover {
   color: var(--rsvp-gold);
   text-decoration-color: var(--rsvp-gold);
+}
+
+/* ── Hero CTA Button ─────────────────────────────── */
+
+.hero-cta {
+  margin-top: 36px;
+}
+
+.btn-rsvp-hero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #c05621 0%, #d4692b 50%, #c9824a 100%);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 18px 48px;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 8px 30px rgba(192,86,33,0.5), 0 3px 10px rgba(192,86,33,0.3);
+  transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth), filter 0.2s;
+  position: relative;
+  overflow: hidden;
+  animation: heroCTAPulse 2.5s ease-in-out 1.5s infinite;
+}
+
+.btn-rsvp-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.btn-rsvp-hero:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 14px 40px rgba(192,86,33,0.55), 0 6px 16px rgba(192,86,33,0.3);
+  filter: brightness(1.07);
+  animation: none;
+}
+
+.btn-rsvp-hero:hover::before {
+  opacity: 1;
+}
+
+.btn-rsvp-hero:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 4px 16px rgba(192,86,33,0.35);
+}
+
+@keyframes heroCTAPulse {
+  0%, 100% { box-shadow: 0 8px 30px rgba(192,86,33,0.5), 0 3px 10px rgba(192,86,33,0.3); }
+  50%       { box-shadow: 0 8px 40px rgba(192,86,33,0.7), 0 3px 16px rgba(192,86,33,0.4); transform: translateY(-1px); }
+}
+
+/* ── Sticky Mobile Register Button ──────────────── */
+
+.sticky-register {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  display: flex;
+  justify-content: center;
+  padding: 0 20px;
+  pointer-events: none;
+}
+
+.sticky-register:not([hidden]) {
+  display: flex;
+}
+
+.btn-sticky-register {
+  pointer-events: all;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #c05621 0%, #d4692b 100%);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 16px 36px;
+  border-radius: 50px;
+  text-decoration: none;
+  box-shadow: 0 8px 32px rgba(192,86,33,0.55), 0 2px 8px rgba(0,0,0,0.2);
+  transition: transform 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+  animation: slideUpIn 0.4s var(--ease-bounce) both;
+  width: 100%;
+  max-width: 340px;
+  justify-content: center;
+}
+
+.btn-sticky-register:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(192,86,33,0.6), 0 4px 12px rgba(0,0,0,0.2);
+}
+
+@keyframes slideUpIn {
+  from { transform: translateY(80px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+/* Only show sticky button on screens ≤768px */
+@media (min-width: 769px) {
+  .sticky-register {
+    display: none !important;
+  }
 }
 
 /* =====================================================

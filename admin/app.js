@@ -14,11 +14,13 @@ function showDashboard() {
   document.getElementById('login-screen').hidden = true;
   document.getElementById('dashboard').hidden = false;
   loadEvent();
+  startAutoRefresh();
 }
 
 function showLogin() {
   sessionStorage.removeItem('stsa_admin_token');
   adminToken = '';
+  stopAutoRefresh();
   document.getElementById('login-screen').hidden = false;
   document.getElementById('dashboard').hidden = true;
 }
@@ -37,7 +39,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     if (res.ok) {
       adminToken = credential;
       sessionStorage.setItem('stsa_admin_token', credential);
-      showDashboard();
+      showDashboard(); // also calls startAutoRefresh()
     } else {
       errorEl.hidden = false;
     }
@@ -58,8 +60,8 @@ document.querySelectorAll('.tab').forEach(tab => {
     target.hidden = false;
     target.classList.add('active');
 
-    // Load data when switching to registrations or print tabs
-    if (tab.dataset.tab === 'registrations' || tab.dataset.tab === 'print-cards') {
+    // Load data when switching to registrations, activity, recon, or print tabs
+    if (['registrations', 'print-cards', 'activity', 'square-recon'].includes(tab.dataset.tab)) {
       loadRegistrations();
     }
   });
@@ -163,17 +165,52 @@ async function loadRegistrations() {
 }
 
 function renderRegistrations() {
-  // Summary
-  const summaryEl = document.getElementById('reg-summary');
   const total = registrations.length;
+  const paid = registrations.filter(r => r.payment_status === 'paid').length;
+  const pending = registrations.filter(r => r.payment_status !== 'paid').length;
+  const walkins = registrations.filter(r => r.is_walkin).length;
+
+  // ── Big number stats ──
+  const setEl = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  setEl('stat-total', total);
+  setEl('stat-paid', paid);
+  setEl('stat-pending', pending);
+  setEl('stat-walkin', walkins);
+
+  // ── Meal breakdown with percentages ──
   const mealCounts = {};
   registrations.forEach(r => {
     mealCounts[r.meal_choice] = (mealCounts[r.meal_choice] || 0) + 1;
   });
-  const breakdown = Object.entries(mealCounts).map(([meal, count]) => `${count} ${meal}`).join(', ');
-  summaryEl.textContent = total > 0 ? `${total} registered — ${breakdown}` : 'No registrations yet';
+  const mealBreakdownEl = document.getElementById('meal-breakdown');
+  if (mealBreakdownEl) {
+    if (total === 0) {
+      mealBreakdownEl.innerHTML = '';
+    } else {
+      const meals = Object.entries(mealCounts);
+      const mealColors = ['var(--meal-1)', 'var(--meal-2)', 'var(--meal-3)'];
+      const mealBgs = ['var(--meal-1-light)', 'var(--meal-2-light)', 'var(--meal-3-light)'];
+      let idx = 0;
+      mealBreakdownEl.innerHTML = meals.map(([meal, count]) => {
+        const pct = Math.round((count / total) * 100);
+        const color = mealColors[idx] || '#888';
+        const bg = mealBgs[idx] || '#eee';
+        idx++;
+        return `
+          <div class="meal-stat" style="--meal-color:${color};--meal-bg:${bg}">
+            <div class="meal-stat-bar-wrap">
+              <div class="meal-stat-bar" style="width:${pct}%;background:${color}"></div>
+            </div>
+            <div class="meal-stat-info">
+              <span class="meal-stat-name" style="color:${color}">${meal}</span>
+              <span class="meal-stat-count">${count} <span class="meal-stat-pct">(${pct}%)</span></span>
+            </div>
+          </div>`;
+      }).join('');
+    }
+  }
 
-  // Table
+  // ── Table ──
   const tbody = document.getElementById('reg-tbody');
   tbody.innerHTML = '';
   registrations.forEach(r => {
@@ -183,10 +220,11 @@ function renderRegistrations() {
     const badgeClass = isPaid ? 'badge-paid' : 'badge-pending';
 
     const tdName = document.createElement('td');
-    tdName.textContent = r.name + (r.is_walkin ? ' (walk-in)' : '');
+    tdName.textContent = r.name + (r.is_walkin ? ' ★' : '');
+    if (r.is_walkin) tdName.title = 'Walk-in';
 
     const tdEmail = document.createElement('td');
-    tdEmail.textContent = r.email;
+    tdEmail.textContent = r.email || '—';
 
     const tdPhone = document.createElement('td');
     tdPhone.textContent = r.phone || '—';
@@ -197,17 +235,28 @@ function renderRegistrations() {
     const tdStatus = document.createElement('td');
     const badge = document.createElement('span');
     badge.className = `badge ${badgeClass}`;
-    badge.textContent = r.payment_status;
+    badge.textContent = isPaid ? 'Paid' : 'Pending';
     tdStatus.appendChild(badge);
 
     const tdDate = document.createElement('td');
     tdDate.textContent = date;
 
-    tr.append(tdName, tdEmail, tdPhone, tdMeal, tdStatus, tdDate);
+    // ── Payment override button ──
+    const tdAction = document.createElement('td');
+    const overrideBtn = document.createElement('button');
+    overrideBtn.className = isPaid ? 'btn-override btn-mark-pending' : 'btn-override btn-mark-paid';
+    overrideBtn.textContent = isPaid ? 'Mark Pending' : '✓ Mark Paid';
+    overrideBtn.title = isPaid ? 'Override: set to pending' : 'Override: mark as paid (cash/check)';
+    overrideBtn.dataset.id = r.id;
+    overrideBtn.dataset.status = isPaid ? 'pending' : 'paid';
+    overrideBtn.addEventListener('click', handlePaymentOverride);
+    tdAction.appendChild(overrideBtn);
+
+    tr.append(tdName, tdEmail, tdPhone, tdMeal, tdStatus, tdDate, tdAction);
     tbody.appendChild(tr);
   });
 
-  // Populate walk-in modal meal dropdown
+  // ── Populate walk-in modal meal dropdown ──
   const walkinMealSelect = document.getElementById('walkin-meal');
   walkinMealSelect.innerHTML = '<option value="">Select...</option>';
   if (currentEvent) {
@@ -220,6 +269,133 @@ function renderRegistrations() {
       }
     });
   }
+
+  // ── Also render activity and recon if those tabs exist ──
+  renderActivityFeed();
+  renderSquareRecon();
+}
+
+// ─── Payment Override ────────────────────────────────
+async function handlePaymentOverride(e) {
+  const btn = e.currentTarget;
+  const registrationId = btn.dataset.id;
+  const newStatus = btn.dataset.status;
+
+  btn.disabled = true;
+  btn.textContent = 'Updating…';
+
+  try {
+    const res = await fetch(`${API}/update-registration`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+      body: JSON.stringify({ registrationId, payment_status: newStatus }),
+    });
+    if (res.ok) {
+      // Optimistically update the local data
+      const reg = registrations.find(r => String(r.id) === String(registrationId));
+      if (reg) reg.payment_status = newStatus;
+      renderRegistrations();
+    } else {
+      const data = await res.json();
+      alert(`Error: ${data.error || 'Update failed'}`);
+      btn.disabled = false;
+      btn.textContent = newStatus === 'paid' ? '✓ Mark Paid' : 'Mark Pending';
+    }
+  } catch (err) {
+    alert('Network error. Please try again.');
+    btn.disabled = false;
+    btn.textContent = newStatus === 'paid' ? '✓ Mark Paid' : 'Mark Pending';
+  }
+}
+
+// ─── Activity Log ────────────────────────────────────
+function renderActivityFeed() {
+  const feedEl = document.getElementById('activity-feed');
+  if (!feedEl) return;
+
+  if (!registrations.length) {
+    feedEl.innerHTML = '<p class="activity-empty">No registrations yet.</p>';
+    return;
+  }
+
+  // Sort by created_at descending (most recent first)
+  const sorted = [...registrations].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+  const items = sorted.map(r => {
+    const time = new Date(r.created_at).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    const date = new Date(r.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    const isPaid = r.payment_status === 'paid';
+    const isWalkin = r.is_walkin;
+
+    let icon, message, badgeClass;
+    if (isWalkin) {
+      icon = '🚶';
+      message = `Walk-in added: <strong>${r.name}</strong> — ${r.meal_choice}`;
+      badgeClass = 'activity-badge-walkin';
+    } else if (isPaid) {
+      icon = '💳';
+      message = `<strong>${r.name}</strong> registered &amp; paid — ${r.meal_choice}`;
+      badgeClass = 'activity-badge-paid';
+    } else {
+      icon = '📋';
+      message = `<strong>${r.name}</strong> registered — ${r.meal_choice}`;
+      badgeClass = 'activity-badge-pending';
+    }
+
+    return `
+      <div class="activity-item">
+        <div class="activity-icon ${badgeClass}">${icon}</div>
+        <div class="activity-body">
+          <div class="activity-msg">${message}</div>
+          <div class="activity-time">${date} at ${time}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  feedEl.innerHTML = items;
+}
+
+// ─── Square Reconciliation ───────────────────────────
+function renderSquareRecon() {
+  const tbody = document.getElementById('recon-tbody');
+  if (!tbody) return;
+
+  if (!registrations.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#8a8278;padding:24px">No registrations yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = '';
+  registrations.forEach(r => {
+    const tr = document.createElement('tr');
+    const date = new Date(r.created_at).toLocaleDateString();
+    const isPaid = r.payment_status === 'paid';
+    const txId = r.square_transaction_id || r.payment_id || '—';
+    const price = currentEvent ? `$${currentEvent.price_per_person}` : '—';
+
+    const tdName = document.createElement('td');
+    tdName.textContent = r.name + (r.is_walkin ? ' ★' : '');
+
+    const tdAmount = document.createElement('td');
+    tdAmount.textContent = price;
+    tdAmount.style.fontWeight = '600';
+
+    const tdTx = document.createElement('td');
+    tdTx.className = 'tx-id';
+    tdTx.textContent = txId;
+
+    const tdStatus = document.createElement('td');
+    const badge = document.createElement('span');
+    badge.className = `badge ${isPaid ? 'badge-paid' : 'badge-pending'}`;
+    badge.textContent = isPaid ? 'Paid' : 'Pending';
+    tdStatus.appendChild(badge);
+
+    const tdDate = document.createElement('td');
+    tdDate.textContent = date;
+
+    tr.append(tdName, tdAmount, tdTx, tdStatus, tdDate);
+    tbody.appendChild(tr);
+  });
 }
 
 function escapeHtml(str) {
@@ -323,6 +499,36 @@ function renderMealCards() {
 document.getElementById('print-btn').addEventListener('click', () => {
   window.print();
 });
+
+// ─── Manual Refresh Buttons ──────────────────────────
+document.getElementById('manual-refresh-btn')?.addEventListener('click', () => {
+  loadRegistrations();
+});
+
+document.getElementById('activity-refresh-btn')?.addEventListener('click', () => {
+  loadRegistrations();
+});
+
+// ─── Auto-Refresh (30 seconds when dashboard visible) ─
+let autoRefreshTimer = null;
+
+function startAutoRefresh() {
+  stopAutoRefresh();
+  autoRefreshTimer = setInterval(() => {
+    // Only refresh if a data tab is active
+    const activeTab = document.querySelector('.tab.active')?.dataset?.tab;
+    if (['registrations', 'activity', 'square-recon', 'print-cards'].includes(activeTab)) {
+      loadRegistrations();
+    }
+  }, 30000);
+}
+
+function stopAutoRefresh() {
+  if (autoRefreshTimer) {
+    clearInterval(autoRefreshTimer);
+    autoRefreshTimer = null;
+  }
+}
 
 // ─── Init ────────────────────────────────────────────
 if (isAuthenticated()) {

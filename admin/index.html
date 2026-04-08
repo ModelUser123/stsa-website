@@ -75,6 +75,14 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
           Registrations
         </button>
+        <button class="tab" data-tab="activity">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Activity
+        </button>
+        <button class="tab" data-tab="square-recon">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          Payments
+        </button>
         <button class="tab" data-tab="print-cards">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
           Print Meal Cards
@@ -256,7 +264,36 @@
         </div>
       </div>
 
-      <div id="reg-summary" class="reg-summary"></div>
+      <!-- Enhanced Summary Bar -->
+      <div id="reg-summary" class="reg-summary">
+        <div class="summary-stats">
+          <div class="stat-card stat-total">
+            <div class="stat-num" id="stat-total">0</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-card stat-paid">
+            <div class="stat-num" id="stat-paid">0</div>
+            <div class="stat-label">Paid</div>
+          </div>
+          <div class="stat-card stat-pending">
+            <div class="stat-num" id="stat-pending">0</div>
+            <div class="stat-label">Pending</div>
+          </div>
+          <div class="stat-card stat-walkin">
+            <div class="stat-num" id="stat-walkin">0</div>
+            <div class="stat-label">Walk-ins</div>
+          </div>
+        </div>
+        <div id="meal-breakdown" class="meal-breakdown"></div>
+      </div>
+
+      <div class="reg-table-controls">
+        <span class="auto-refresh-label">&#x1F504; Auto-refreshes every 30s</span>
+        <button id="manual-refresh-btn" class="btn-refresh">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Refresh Now
+        </button>
+      </div>
 
       <div id="reg-table-wrap" class="table-wrap">
         <table id="reg-table">
@@ -268,6 +305,7 @@
               <th>Meal</th>
               <th>Status</th>
               <th>Date</th>
+              <th>Payment</th>
             </tr>
           </thead>
           <tbody id="reg-tbody"></tbody>
@@ -310,7 +348,48 @@
       </div>
     </section>
 
-    <!-- Tab 3: Print Meal Cards -->
+    <!-- Tab 3: Activity Log -->
+    <section id="tab-activity" class="tab-content" hidden>
+      <div class="activity-header">
+        <div>
+          <h2>Activity Log</h2>
+          <p class="activity-header-sub">Chronological feed of registrations and payments</p>
+        </div>
+        <button id="activity-refresh-btn" class="btn-refresh">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Refresh
+        </button>
+      </div>
+      <div id="activity-feed" class="activity-feed">
+        <p class="activity-empty">Loading activity...</p>
+      </div>
+    </section>
+
+    <!-- Tab 4: Square Reconciliation -->
+    <section id="tab-square-recon" class="tab-content" hidden>
+      <div class="recon-header">
+        <div>
+          <h2>Payment Reconciliation</h2>
+          <p class="recon-header-sub">All registrations with Square transaction details</p>
+        </div>
+      </div>
+      <div id="recon-table-wrap" class="table-wrap">
+        <table id="recon-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Amount</th>
+              <th>Square Transaction ID</th>
+              <th>Payment Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="recon-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Tab 5: Print Meal Cards -->
     <section id="tab-print-cards" class="tab-content" hidden>
       <div class="print-header">
         <div>
