@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STSA Event RSVP</title>
+  <link rel="stylesheet" href="/shared/brand.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Loading State -->
+  <div id="loading" class="loading-screen">
+    <div class="loader">
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+      <div class="loader-dot"></div>
+    </div>
+  </div>
+
+  <!-- No Event State -->
+  <div id="no-event" class="no-event-screen" hidden>
+    <div class="message-card">
+      <h1>STSA</h1>
+      <p>No upcoming event at this time. Check back soon!</p>
+    </div>
+  </div>
+
+  <!-- RSVP Page -->
+  <div id="rsvp-page" class="rsvp-page" hidden>
+    <header class="rsvp-header">
+      <div class="container">
+        <h1 class="brand">STSA</h1>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- Event Details Section -->
+      <section class="event-hero">
+        <div class="event-hero-content">
+          <p class="event-label">You're Invited</p>
+          <h2 id="ev-name" class="event-title"></h2>
+          <div class="event-meta">
+            <div class="meta-item">
+              <span class="meta-icon">&#128197;</span>
+              <span id="ev-date"></span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">&#128205;</span>
+              <a id="ev-venue-link" href="#" target="_blank">
+                <span id="ev-venue"></span>
+              </a>
+            </div>
+            <div class="meta-item">
+              <span class="meta-icon">&#128176;</span>
+              <span><span id="ev-price"></span> per person</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Schedule -->
+      <section class="schedule-bar">
+        <div class="schedule-item">
+          <span class="sched-time" id="ev-time-reg"></span>
+          <span class="sched-label">Registration &amp; Networking</span>
+        </div>
+        <div class="schedule-item">
+          <span class="sched-time" id="ev-time-lunch"></span>
+          <span class="sched-label">Lunch</span>
+        </div>
+        <div class="schedule-item">
+          <span class="sched-time" id="ev-time-meeting"></span>
+          <span class="sched-label">Meeting</span>
+        </div>
+      </section>
+
+      <!-- Speaker Info -->
+      <section id="speaker-section" class="speaker-section" hidden>
+        <h3>Featured Speaker</h3>
+        <div class="speaker-card">
+          <div class="speaker-info">
+            <h4 id="ev-speaker-name"></h4>
+            <p class="speaker-topic" id="ev-topic"></p>
+            <p class="speaker-bio" id="ev-speaker-bio"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Special Guest -->
+      <section id="guest-section" class="speaker-section" hidden>
+        <h3>Special Guest</h3>
+        <div class="speaker-card">
+          <div class="speaker-info">
+            <h4 id="ev-guest-name"></h4>
+            <p class="speaker-bio" id="ev-guest-bio"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Registration Form -->
+      <section class="reg-section">
+        <h3>Register &amp; Pick Your Meal</h3>
+        <form id="rsvp-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-name">Full Name *</label>
+              <input type="text" id="reg-name" required placeholder="Your name">
+            </div>
+            <div class="form-group">
+              <label for="reg-email">Email *</label>
+              <input type="email" id="reg-email" required placeholder="you@email.com">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="reg-phone">Phone (optional)</label>
+              <input type="tel" id="reg-phone" placeholder="(210) 555-0000">
+            </div>
+          </div>
+
+          <div class="meal-picker">
+            <label class="meal-label">Pick Your Meal *</label>
+            <div id="meal-buttons" class="meal-buttons"></div>
+          </div>
+
+          <!-- Additional Guests -->
+          <div class="additional-guests">
+            <button type="button" id="add-guest-btn" class="btn-secondary">+ Add Another Guest</button>
+            <div id="guest-list"></div>
+          </div>
+
+          <!-- Total -->
+          <div class="total-bar">
+            <span>Total:</span>
+            <span id="total-amount" class="total-amount">$0</span>
+          </div>
+
+          <button type="submit" id="pay-btn" class="btn-primary btn-full btn-large pay-btn">
+            Pay &amp; Register
+          </button>
+          <p id="form-error" class="error-text" hidden></p>
+        </form>
+      </section>
+
+      <!-- Sponsors -->
+      <section id="sponsors-section" class="sponsors-section" hidden>
+        <div id="speaker-sponsor" hidden>
+          <p><strong>Speaker Sponsor:</strong> <span id="ev-speaker-sponsor"></span></p>
+        </div>
+        <div id="luncheon-sponsor" hidden>
+          <p><strong>Luncheon Sponsor:</strong> <span id="ev-luncheon-sponsor"></span></p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rsvp-footer">
+      <p>&copy; 2026 South Texas Surety Association</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
