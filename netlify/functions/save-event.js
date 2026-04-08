@@ -22,7 +22,7 @@ exports.handler = async (event) => {
     const { error: deactivateError } = await supabase
       .from('events')
       .update({ is_active: false })
-      .neq('id', 0);
+      .eq('is_active', true);
 
     if (deactivateError) throw deactivateError;
 
