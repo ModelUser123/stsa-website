@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>STSA Admin Dashboard</title>
+  <link rel="stylesheet" href="/shared/brand.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <h1>STSA</h1>
+        <p>Admin Dashboard</p>
+      </div>
+      <form id="login-form">
+        <input type="password" id="password-input" placeholder="Enter admin password" autocomplete="current-password" required>
+        <button type="submit" class="btn-primary btn-full">Sign In</button>
+        <p id="login-error" class="error-text" hidden>Invalid password. Try again.</p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dashboard (hidden until authenticated) -->
+  <div id="dashboard" class="dashboard" hidden>
+    <header class="dash-header">
+      <h1>STSA Admin</h1>
+      <button id="logout-btn" class="btn-logout">Logout</button>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab active" data-tab="event-setup">Event Setup</button>
+      <button class="tab" data-tab="registrations">Registrations</button>
+      <button class="tab" data-tab="print-cards">Print Meal Cards</button>
+    </nav>
+
+    <!-- Tab 1: Event Setup -->
+    <section id="tab-event-setup" class="tab-content active">
+      <form id="event-form" class="event-form">
+        <h2>Event Details</h2>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="event_name">Event Name</label>
+            <input type="text" id="event_name" name="event_name" placeholder="May Luncheon" required>
+          </div>
+          <div class="form-group">
+            <label for="event_date">Event Date</label>
+            <input type="date" id="event_date" name="event_date" required>
+          </div>
+          <div class="form-group">
+            <label for="rsvp_deadline">RSVP Deadline</label>
+            <input type="date" id="rsvp_deadline" name="rsvp_deadline" required>
+          </div>
+          <div class="form-group">
+            <label for="time_registration">Registration / Networking</label>
+            <input type="time" id="time_registration" name="time_registration" value="11:00" required>
+          </div>
+          <div class="form-group">
+            <label for="time_lunch">Lunch Begins</label>
+            <input type="time" id="time_lunch" name="time_lunch" value="11:30" required>
+          </div>
+          <div class="form-group">
+            <label for="time_meeting_start">Meeting Starts</label>
+            <input type="time" id="time_meeting_start" name="time_meeting_start" value="12:00" required>
+          </div>
+          <div class="form-group">
+            <label for="time_meeting_end">Meeting Ends</label>
+            <input type="time" id="time_meeting_end" name="time_meeting_end" value="13:00" required>
+          </div>
+          <div class="form-group">
+            <label for="venue_name">Venue Name</label>
+            <input type="text" id="venue_name" name="venue_name" placeholder="The Barn Door" required>
+          </div>
+          <div class="form-group">
+            <label for="venue_address">Venue Address</label>
+            <input type="text" id="venue_address" name="venue_address" placeholder="8400 N. New Braunfels Ave, San Antonio, TX 78209" required>
+          </div>
+          <div class="form-group">
+            <label for="price_per_person">Price Per Person ($)</label>
+            <input type="number" id="price_per_person" name="price_per_person" value="40" min="0" required>
+          </div>
+
+          <h2 class="full-width section-divider">Meal Choices</h2>
+          <div class="form-group">
+            <label for="meal_choice_1">Meal Choice 1 <span class="meal-dot" style="background:var(--meal-1)"></span></label>
+            <input type="text" id="meal_choice_1" name="meal_choice_1" placeholder="Steak" required>
+          </div>
+          <div class="form-group">
+            <label for="meal_choice_2">Meal Choice 2 <span class="meal-dot" style="background:var(--meal-2)"></span></label>
+            <input type="text" id="meal_choice_2" name="meal_choice_2" placeholder="Chicken" required>
+          </div>
+          <div class="form-group">
+            <label for="meal_choice_3">Meal Choice 3 <span class="meal-dot" style="background:var(--meal-3)"></span></label>
+            <input type="text" id="meal_choice_3" name="meal_choice_3" placeholder="Fish" required>
+          </div>
+
+          <h2 class="full-width section-divider">Speaker</h2>
+          <div class="form-group">
+            <label for="speaker_name">Speaker Name</label>
+            <input type="text" id="speaker_name" name="speaker_name" placeholder="John Smith">
+          </div>
+          <div class="form-group">
+            <label for="topic">Topic</label>
+            <input type="text" id="topic" name="topic" placeholder="AI in Construction &amp; Surety">
+          </div>
+          <div class="form-group full-width">
+            <label for="speaker_bio">Speaker Title / Bio</label>
+            <textarea id="speaker_bio" name="speaker_bio" rows="3" placeholder="Director of Engineering, City of San Antonio..."></textarea>
+          </div>
+
+          <h2 class="full-width section-divider">Special Guest (Optional)</h2>
+          <div class="form-group">
+            <label for="guest_name">Guest Name</label>
+            <input type="text" id="guest_name" name="guest_name" placeholder="">
+          </div>
+          <div class="form-group full-width">
+            <label for="guest_bio">Guest Bio</label>
+            <textarea id="guest_bio" name="guest_bio" rows="3" placeholder=""></textarea>
+          </div>
+
+          <h2 class="full-width section-divider">Sponsors (Optional)</h2>
+          <div class="form-group">
+            <label for="speaker_sponsor_name">Speaker Sponsor Name</label>
+            <input type="text" id="speaker_sponsor_name" name="speaker_sponsor_name">
+          </div>
+          <div class="form-group">
+            <label for="speaker_sponsor_company">Speaker Sponsor Company</label>
+            <input type="text" id="speaker_sponsor_company" name="speaker_sponsor_company">
+          </div>
+          <div class="form-group">
+            <label for="speaker_sponsor_email">Speaker Sponsor Email</label>
+            <input type="email" id="speaker_sponsor_email" name="speaker_sponsor_email">
+          </div>
+          <div class="form-group">
+            <label for="luncheon_sponsor_name">Luncheon Sponsor Name</label>
+            <input type="text" id="luncheon_sponsor_name" name="luncheon_sponsor_name">
+          </div>
+          <div class="form-group">
+            <label for="luncheon_sponsor_company">Luncheon Sponsor Company</label>
+            <input type="text" id="luncheon_sponsor_company" name="luncheon_sponsor_company">
+          </div>
+          <div class="form-group">
+            <label for="luncheon_sponsor_website">Luncheon Sponsor Website</label>
+            <input type="url" id="luncheon_sponsor_website" name="luncheon_sponsor_website">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-success btn-full btn-large">Save &amp; Publish</button>
+        </div>
+        <p id="save-status" class="status-text" hidden></p>
+      </form>
+    </section>
+
+    <!-- Tab 2: Registrations -->
+    <section id="tab-registrations" class="tab-content" hidden>
+      <div class="reg-header">
+        <h2>Registrations</h2>
+        <div class="reg-actions">
+          <button id="add-walkin-btn" class="btn-primary">+ Add Walk-in</button>
+          <button id="export-csv-btn" class="btn-secondary">Export CSV</button>
+        </div>
+      </div>
+      <div id="reg-summary" class="reg-summary"></div>
+      <div id="reg-table-wrap" class="table-wrap">
+        <table id="reg-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Meal</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="reg-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Walk-in Modal -->
+      <div id="walkin-modal" class="modal" hidden>
+        <div class="modal-content">
+          <h3>Add Walk-in</h3>
+          <form id="walkin-form">
+            <div class="form-group">
+              <label for="walkin-name">Name</label>
+              <input type="text" id="walkin-name" required>
+            </div>
+            <div class="form-group">
+              <label for="walkin-email">Email (optional)</label>
+              <input type="email" id="walkin-email">
+            </div>
+            <div class="form-group">
+              <label for="walkin-meal">Meal Choice</label>
+              <select id="walkin-meal" required>
+                <option value="">Select...</option>
+              </select>
+            </div>
+            <div class="modal-actions">
+              <button type="button" id="walkin-cancel" class="btn-secondary">Cancel</button>
+              <button type="submit" class="btn-primary">Add Walk-in</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 3: Print Meal Cards -->
+    <section id="tab-print-cards" class="tab-content" hidden>
+      <div class="print-header">
+        <h2>Meal Cards</h2>
+        <button id="print-btn" class="btn-primary">Print Cards</button>
+      </div>
+      <div id="cards-preview" class="cards-grid"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
