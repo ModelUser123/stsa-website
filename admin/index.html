@@ -66,6 +66,13 @@
       </button>
     </header>
 
+    <!-- Welcome Banner -->
+    <div class="welcome-banner" id="welcome-banner">
+      <span class="welcome-icon">👋</span>
+      <span class="welcome-text">Welcome to STSA Event Manager! Use the tabs above to set up events, track registrations, and manage payments.</span>
+      <button class="welcome-dismiss" id="welcome-dismiss" aria-label="Dismiss">✕</button>
+    </div>
+
     <!-- Main Tabs -->
     <nav class="tabs">
       <div class="tabs-inner">
@@ -97,6 +104,11 @@
          TAB 1: EVENT SETUP
     ══════════════════════════════════ -->
     <section id="tab-event-setup" class="tab-content active">
+
+      <div class="tab-help-text">
+        <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Create and manage your next event. Fill in the details, preview how it looks, then Save &amp; Publish.
+      </div>
 
       <!-- Subtabs -->
       <div class="subtabs-bar">
@@ -133,7 +145,10 @@
                 <input type="date" id="event_date" name="event_date" required>
               </div>
               <div class="form-group">
-                <label for="rsvp_deadline">RSVP Deadline</label>
+                <label for="rsvp_deadline">
+                  RSVP Deadline
+                  <span class="help-tip" data-tip="After this date, the RSVP form will still work but will show a 'late registration' notice">ℹ️</span>
+                </label>
                 <input type="date" id="rsvp_deadline" name="rsvp_deadline" required>
               </div>
               <div class="form-group">
@@ -263,6 +278,9 @@
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               Save &amp; Publish Event
             </button>
+            <p class="save-help-text">
+              <span class="help-tip-inline">ℹ️ This saves your event and makes the RSVP page live immediately — members can start registering right away.</span>
+            </p>
           </div>
           <p id="save-status" class="status-text" hidden></p>
         </form>
@@ -301,7 +319,7 @@
           </table>
         </div>
         <div id="history-detail-panel" class="history-detail-panel" hidden></div>
-        <p id="history-empty" class="history-empty" hidden>No events found.</p>
+        <p id="history-empty" class="history-empty" hidden>This is your first event! History will appear here after you create and publish your next one.</p>
       </div><!-- /#subtab-es-history -->
 
     </section><!-- /#tab-event-setup -->
@@ -311,13 +329,18 @@
     ══════════════════════════════════ -->
     <section id="tab-registrations" class="tab-content" hidden>
 
+      <div class="tab-help-text">
+        <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        See who's registered, their meal choices, and payment status. Add walk-ins on event day.
+      </div>
+
       <div class="reg-header">
         <div>
           <h2>Registrations</h2>
           <p class="reg-header-sub" id="reg-event-context">Loading event…</p>
         </div>
         <div class="reg-actions">
-          <button id="add-walkin-btn" class="btn-primary">
+          <button id="add-walkin-btn" class="btn-primary" title="For attendees who show up without pre-registering">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Add Walk-in
           </button>
@@ -473,6 +496,11 @@
     ══════════════════════════════════ -->
     <section id="tab-activity-payments" class="tab-content" hidden>
 
+      <div class="tab-help-text">
+        <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Track registrations and payments as they come in. Use Payment Reconciliation to cross-check with your Square account.
+      </div>
+
       <div class="ap-header">
         <div>
           <h2>Activity &amp; Payments</h2>
@@ -529,6 +557,12 @@
          TAB 4: PRINT MEAL CARDS
     ══════════════════════════════════ -->
     <section id="tab-print-cards" class="tab-content" hidden>
+
+      <div class="tab-help-text">
+        <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Print color-coded cards for the venue servers. Each card shows the attendee's name and meal choice. Hand them out at the door!
+      </div>
+
       <div class="print-header">
         <div>
           <h2>Meal Cards</h2>
@@ -546,6 +580,11 @@
          TAB 5: ANALYTICS
     ══════════════════════════════════ -->
     <section id="tab-analytics" class="tab-content" hidden>
+
+      <div class="tab-help-text">
+        <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Your event dashboard — see totals, trends, and payment breakdowns at a glance. All past events are shown at the bottom.
+      </div>
 
       <div class="analytics-header">
         <div>

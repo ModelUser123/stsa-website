@@ -2434,3 +2434,323 @@ tbody tr:hover td {
     font-size: 1.9rem;
   }
 }
+
+/* =============================================================
+   WELCOME BANNER — Friendly greeting at top of dashboard
+   ============================================================= */
+
+.welcome-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(90deg, #f0f8ff 0%, #e8f4fd 100%);
+  border-bottom: 1px solid #bde0fc;
+  padding: 12px 32px;
+  font-size: 0.875rem;
+  color: #1a3a52;
+  font-weight: 500;
+  animation: welcomeFadeIn 0.5s ease both;
+  position: relative;
+}
+
+.welcome-banner[hidden] {
+  display: none !important;
+}
+
+@keyframes welcomeFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes welcomeFadeOut {
+  from { opacity: 1; transform: translateY(0); max-height: 60px; }
+  to   { opacity: 0; transform: translateY(-8px); max-height: 0; padding: 0; }
+}
+
+.welcome-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.welcome-text {
+  flex: 1;
+  line-height: 1.5;
+}
+
+.welcome-dismiss {
+  background: none;
+  border: none;
+  color: #6b9ab8;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.welcome-dismiss:hover {
+  background: rgba(26,58,82,0.08);
+  color: var(--board-navy);
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .welcome-banner {
+    padding: 12px 16px;
+    font-size: 0.82rem;
+  }
+}
+
+/* =============================================================
+   TAB HELP TEXT — Brief helper line under each tab heading
+   ============================================================= */
+
+.tab-help-text {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: linear-gradient(90deg, rgba(201,169,110,0.08) 0%, rgba(201,169,110,0.03) 100%);
+  border: 1px solid rgba(201,169,110,0.22);
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-size: 0.84rem;
+  color: #5a4a30;
+  font-weight: 500;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.tab-help-icon {
+  color: var(--board-amber);
+  flex-shrink: 0;
+  margin-top: 1px;
+  opacity: 0.85;
+}
+
+/* =============================================================
+   HELP TIPS — Tooltip icons inline with field labels
+   ============================================================= */
+
+.help-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+  margin-left: 2px;
+  opacity: 0.7;
+  transition: opacity 0.15s ease;
+}
+
+.help-tip:hover {
+  opacity: 1;
+}
+
+/* Tooltip bubble */
+.help-tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--board-deep-navy);
+  color: rgba(255,255,255,0.92);
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.45;
+  padding: 8px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  max-width: 260px;
+  white-space: normal;
+  width: max-content;
+  max-width: 240px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  text-transform: none;
+  letter-spacing: 0;
+  font-family: var(--font-body);
+}
+
+/* Tooltip arrow */
+.help-tip::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--board-deep-navy);
+  z-index: 1001;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.help-tip:hover::after,
+.help-tip:hover::before {
+  opacity: 1;
+}
+
+/* Save help text below the publish button */
+.save-help-text {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.help-tip-inline {
+  font-size: 0.80rem;
+  color: #7a8a78;
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* =============================================================
+   ADDITIONAL VISUAL POLISH
+   ============================================================= */
+
+/* Smoother tab content fade-in */
+.tab-content {
+  animation: tabFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Subtab content fade */
+.subtab-content {
+  animation: tabFadeIn 0.22s ease both;
+}
+
+/* Stat cards — smooth counter animation-ready */
+.stat-num,
+.ac-num {
+  transition: color 0.3s ease;
+}
+
+/* Stat card hover is already in styles; ensure it works on touch */
+@media (hover: hover) {
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10,22,40,0.1);
+  }
+  .analytics-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(10,22,40,0.1);
+  }
+}
+
+/* Form section card polish */
+.form-section-card {
+  transition: box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+/* Smoother button hover transitions */
+.btn-primary,
+.btn-secondary,
+.btn-refresh,
+.btn-override,
+.subtab,
+.tab,
+.meal-card {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Activity items slide in slightly on load */
+.activity-item {
+  animation: activitySlideIn 0.3s ease both;
+}
+
+.activity-item:nth-child(2) { animation-delay: 0.04s; }
+.activity-item:nth-child(3) { animation-delay: 0.08s; }
+.activity-item:nth-child(4) { animation-delay: 0.12s; }
+.activity-item:nth-child(5) { animation-delay: 0.16s; }
+.activity-item:nth-child(n+6) { animation-delay: 0.2s; }
+
+@keyframes activitySlideIn {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Timeline rows hover */
+.timeline-row:not(.timeline-header):hover {
+  background: rgba(248,246,243,0.9);
+  cursor: default;
+}
+
+/* Export panel — slightly larger icon on hover */
+.export-panel-icon {
+  display: inline-block;
+  transition: transform 0.25s ease;
+}
+.export-panel:hover .export-panel-icon {
+  transform: scale(1.1) translateY(-2px);
+}
+
+/* Meal cards — stagger fade-in */
+.meal-card {
+  animation: mealCardIn 0.25s ease both;
+}
+.meal-card:nth-child(2)  { animation-delay: 0.04s; }
+.meal-card:nth-child(3)  { animation-delay: 0.08s; }
+.meal-card:nth-child(4)  { animation-delay: 0.12s; }
+.meal-card:nth-child(n+5){ animation-delay: 0.15s; }
+
+@keyframes mealCardIn {
+  from { opacity: 0; transform: scale(0.97) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Analytics summary cards stagger */
+.analytics-card {
+  animation: cardSlideUp 0.3s ease both;
+}
+.analytics-card:nth-child(1) { animation-delay: 0.00s; }
+.analytics-card:nth-child(2) { animation-delay: 0.06s; }
+.analytics-card:nth-child(3) { animation-delay: 0.12s; }
+.analytics-card:nth-child(4) { animation-delay: 0.18s; }
+
+@keyframes cardSlideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtle pulse on save success */
+@keyframes successPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(39,174,96,0.35); }
+  70%  { box-shadow: 0 0 0 10px rgba(39,174,96,0); }
+  100% { box-shadow: 0 0 0 0 rgba(39,174,96,0); }
+}
+
+.status-text.success {
+  animation: successPulse 0.6s ease;
+}
+
+/* History rows — smooth expand indicator */
+.history-table-row.expanded td:first-child::before {
+  content: '▾ ';
+  color: var(--board-burnt);
+}
+
+/* Responsive: welcome banner stacks nicely */
+@media (max-width: 480px) {
+  .welcome-banner {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tab-help-text {
+    font-size: 0.80rem;
+    padding: 10px 14px;
+  }
+
+  .help-tip::after {
+    left: 0;
+    transform: none;
+    max-width: 200px;
+  }
+}

@@ -571,7 +571,7 @@ function renderRegistrations() {
   tbody.innerHTML = '';
 
   if (total === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#8a8278;padding:32px">No registrations yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#8a8278;padding:40px;font-size:0.95rem">No one has registered yet. Send out your RSVP link to get started! 🎉</td></tr>';
     return;
   }
 
@@ -638,7 +638,7 @@ function renderWalkinSubtab() {
   if (!tbody) return;
   const walkins = registrations.filter(r => r.is_walkin);
   if (!walkins.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#8a8278;padding:32px">No walk-in guests yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#8a8278;padding:40px;font-size:0.95rem">No walk-in guests yet. Use the "Add Walk-in" button on event day to add late arrivals.</td></tr>';
     return;
   }
   tbody.innerHTML = '';
@@ -712,7 +712,7 @@ function renderActivityFeed() {
   const feedEl = document.getElementById('activity-feed');
   if (!feedEl) return;
   if (!registrations.length) {
-    feedEl.innerHTML = '<p class="activity-empty">No registrations yet.</p>';
+    feedEl.innerHTML = '<p class="activity-empty">Activity will show up here as people register and pay. Check back soon! 📬</p>';
     return;
   }
   const sorted = [...registrations].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
@@ -751,7 +751,7 @@ function renderSquareRecon() {
   const tbody = document.getElementById('recon-tbody');
   if (!tbody) return;
   if (!registrations.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#8a8278;padding:24px">No registrations yet.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#8a8278;padding:40px;font-size:0.95rem">No registrations yet — Square transaction details will appear here once people start signing up.</td></tr>';
     return;
   }
   tbody.innerHTML = '';
@@ -863,7 +863,7 @@ function renderMealCards() {
   container.innerHTML = '';
 
   if (!currentEvent || !registrations.length) {
-    container.innerHTML = '<p style="color:var(--text-light);padding:24px 0">No registrations to print.</p>';
+    container.innerHTML = '<p style="color:var(--text-light);padding:40px 0;text-align:center;font-size:0.95rem">No one has registered yet — once they do, their meal cards will appear here ready to print! 🎉</p>';
     return;
   }
 
@@ -993,7 +993,7 @@ function renderAnalytics() {
   const timelineEl = document.getElementById('analytics-timeline');
   if (timelineEl) {
     if (!eventHistory.length) {
-      timelineEl.innerHTML = '<p class="analytics-empty-msg" style="padding:32px;text-align:center">No event history found.</p>';
+      timelineEl.innerHTML = '<p class="analytics-empty-msg" style="padding:32px;text-align:center">This is your first event! History will appear here after you create your next one. 🌟</p>';
     } else {
       const maxAttendees = Math.max(...eventHistory.map(e => e.total_registrations), 1);
       timelineEl.innerHTML = `
@@ -1095,6 +1095,27 @@ function formatTime(t) {
   const h12  = h % 12 || 12;
   return `${h12}:${String(min).padStart(2, '0')} ${ampm}`;
 }
+
+// ═════════════════════════════════════════════════════════════
+// WELCOME BANNER — Dismiss on click, remember in sessionStorage
+// ═════════════════════════════════════════════════════════════
+
+(function initWelcomeBanner() {
+  const banner = document.getElementById('welcome-banner');
+  const dismiss = document.getElementById('welcome-dismiss');
+  if (!banner || !dismiss) return;
+
+  // Dismiss if already closed this session
+  if (sessionStorage.getItem('stsa_welcome_dismissed')) {
+    banner.hidden = true;
+  }
+
+  dismiss.addEventListener('click', () => {
+    banner.style.animation = 'welcomeFadeOut 0.3s ease forwards';
+    setTimeout(() => { banner.hidden = true; }, 300);
+    sessionStorage.setItem('stsa_welcome_dismissed', '1');
+  });
+})();
 
 // ═════════════════════════════════════════════════════════════
 // INIT — Check existing session
