@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're Registered! | STSA</title>
+  <link rel="stylesheet" href="/shared/brand.css">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .confirm-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--light-gray);
+      padding: 24px;
+    }
+
+    .confirm-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 48px 40px;
+      max-width: 560px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .confirm-check {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--success), #2ecc71);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-size: 2.5rem;
+      color: var(--white);
+      animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    .confirm-card h1 {
+      font-size: 1.8rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .confirm-card .subtitle {
+      color: var(--text-light);
+      font-size: 1rem;
+      margin-bottom: 24px;
+    }
+
+    .confirm-detail {
+      background: var(--light-gray);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .confirm-detail p {
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .confirm-detail p:last-child {
+      margin-bottom: 0;
+    }
+
+    .confirm-detail strong {
+      color: var(--navy);
+    }
+
+    .confirm-venue {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--medium-gray);
+      font-size: 0.95rem;
+      color: var(--text-dark);
+    }
+
+    .confirm-venue p {
+      margin-bottom: 4px;
+    }
+
+    .confirm-venue a {
+      font-weight: 700;
+    }
+
+    .confirm-receipt-note {
+      color: var(--text-light);
+      font-size: 0.85rem;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="confirm-screen">
+    <div class="confirm-card">
+      <div class="confirm-check">&#10003;</div>
+      <h1>You're Registered!</h1>
+      <p class="subtitle">We can't wait to see you there.</p>
+
+      <div id="confirm-details" class="confirm-detail">
+        <p>Loading your registration details...</p>
+      </div>
+
+      <div id="confirm-venue" class="confirm-venue" hidden></div>
+
+      <p class="confirm-receipt-note">
+        A payment receipt from Square has been sent to your email.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const API = '/api';
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = String(str);
+      return div.innerHTML;
+    }
+
+    async function loadConfirmation() {
+      const params = new URLSearchParams(window.location.search);
+      const regId = params.get('reg');
+      const detailsEl = document.getElementById('confirm-details');
+
+      // Load event details for venue info
+      try {
+        const res = await fetch(`${API}/get-event`);
+        const data = await res.json();
+
+        if (data.event) {
+          const ev = data.event;
+          const venueEl = document.getElementById('confirm-venue');
+          const eventDate = new Date(ev.event_date + 'T00:00:00').toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+
+          const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(ev.venue_address)}`;
+
+          // Build venue DOM elements programmatically to avoid innerHTML XSS with href
+          const pName = document.createElement('p');
+          const strongName = document.createElement('strong');
+          strongName.textContent = ev.event_name;
+          pName.appendChild(strongName);
+
+          const pDate = document.createElement('p');
+          pDate.textContent = eventDate;
+
+          const pVenue = document.createElement('p');
+          const aVenue = document.createElement('a');
+          aVenue.href = mapsUrl;
+          aVenue.target = '_blank';
+          aVenue.rel = 'noopener noreferrer';
+          aVenue.textContent = `${ev.venue_name} — ${ev.venue_address}`;
+          pVenue.appendChild(aVenue);
+
+          venueEl.innerHTML = '';
+          venueEl.appendChild(pName);
+          venueEl.appendChild(pDate);
+          venueEl.appendChild(pVenue);
+          venueEl.hidden = false;
+
+          // Build details DOM elements programmatically
+          const pEvent = document.createElement('p');
+          const strongEvent = document.createElement('strong');
+          strongEvent.textContent = 'Event:';
+          pEvent.appendChild(strongEvent);
+          pEvent.appendChild(document.createTextNode(' ' + ev.event_name));
+
+          const pEventDate = document.createElement('p');
+          const strongEventDate = document.createElement('strong');
+          strongEventDate.textContent = 'Date:';
+          pEventDate.appendChild(strongEventDate);
+          pEventDate.appendChild(document.createTextNode(' ' + eventDate));
+
+          const pAmount = document.createElement('p');
+          const strongAmount = document.createElement('strong');
+          strongAmount.textContent = 'Amount Paid:';
+          pAmount.appendChild(strongAmount);
+          pAmount.appendChild(document.createTextNode(' Check your email for receipt details'));
+
+          detailsEl.innerHTML = '';
+          detailsEl.appendChild(pEvent);
+          detailsEl.appendChild(pEventDate);
+          detailsEl.appendChild(pAmount);
+        } else {
+          detailsEl.innerHTML = '<p>Your registration is confirmed! Check your email for details.</p>';
+        }
+      } catch (err) {
+        detailsEl.innerHTML = '<p>Your registration is confirmed! Check your email for details.</p>';
+      }
+    }
+
+    loadConfirmation();
+  </script>
+</body>
+</html>
