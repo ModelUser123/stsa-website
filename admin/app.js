@@ -571,12 +571,13 @@ function renderRegistrations() {
   tbody.innerHTML = '';
 
   if (total === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#8a8278;padding:40px;font-size:0.95rem">No one has registered yet. Send out your RSVP link to get started! 🎉</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#8a8278;padding:40px;font-size:0.95rem">No one has registered yet. Send out your RSVP link to get started! 🎉</td></tr>';
     return;
   }
 
   registrations.forEach(r => {
     const tr = document.createElement('tr');
+    tr.dataset.regId = r.id;
     const date = new Date(r.created_at).toLocaleDateString();
     const isPaid = r.payment_status === 'paid';
 
@@ -603,7 +604,7 @@ function renderRegistrations() {
     const tdDate = document.createElement('td');
     tdDate.textContent = date;
 
-    const tdAction = document.createElement('td');
+    const tdPayment = document.createElement('td');
     const overrideBtn = document.createElement('button');
     overrideBtn.className = isPaid ? 'btn-override btn-mark-pending' : 'btn-override btn-mark-paid';
     overrideBtn.textContent = isPaid ? 'Mark Pending' : '✓ Mark Paid';
@@ -611,9 +612,18 @@ function renderRegistrations() {
     overrideBtn.dataset.id     = r.id;
     overrideBtn.dataset.status = isPaid ? 'pending' : 'paid';
     overrideBtn.addEventListener('click', handlePaymentOverride);
-    tdAction.appendChild(overrideBtn);
+    tdPayment.appendChild(overrideBtn);
 
-    tr.append(tdName, tdEmail, tdPhone, tdMeal, tdStatus, tdDate, tdAction);
+    const tdActions = document.createElement('td');
+    tdActions.className = 'td-actions';
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn-edit-row';
+    editBtn.innerHTML = '✏️';
+    editBtn.title = 'Edit this registration';
+    editBtn.addEventListener('click', () => handleInlineEditStart(r.id));
+    tdActions.appendChild(editBtn);
+
+    tr.append(tdName, tdEmail, tdPhone, tdMeal, tdStatus, tdDate, tdPayment, tdActions);
     tbody.appendChild(tr);
   });
 
@@ -705,6 +715,139 @@ async function handlePaymentOverride(e) {
 }
 
 // ═════════════════════════════════════════════════════════════
+// INLINE EDIT — Registrations table
+// ═════════════════════════════════════════════════════════════
+
+function handleInlineEditStart(regId) {
+  const tbody = document.getElementById('reg-tbody');
+  const tr = tbody.querySelector(`tr[data-reg-id="${regId}"]`);
+  if (!tr || tr.classList.contains('editing')) return;
+
+  const reg = registrations.find(r => String(r.id) === String(regId));
+  if (!reg) return;
+
+  tr.classList.add('editing');
+
+  // Cell order: Name, Email, Phone, Meal, Status, Date, Payment, Actions
+  const cells = tr.cells;
+
+  // Name (0)
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.className = 'inline-edit-input';
+  nameInput.value = reg.name || '';
+  nameInput.maxLength = 100;
+  cells[0].innerHTML = '';
+  cells[0].appendChild(nameInput);
+
+  // Email (1)
+  const emailInput = document.createElement('input');
+  emailInput.type = 'email';
+  emailInput.className = 'inline-edit-input';
+  emailInput.value = reg.email || '';
+  emailInput.maxLength = 254;
+  cells[1].innerHTML = '';
+  cells[1].appendChild(emailInput);
+
+  // Phone (2)
+  const phoneInput = document.createElement('input');
+  phoneInput.type = 'tel';
+  phoneInput.className = 'inline-edit-input';
+  phoneInput.value = reg.phone || '';
+  phoneInput.maxLength = 20;
+  cells[2].innerHTML = '';
+  cells[2].appendChild(phoneInput);
+
+  // Meal (3)
+  const mealSelect = document.createElement('select');
+  mealSelect.className = 'inline-edit-select';
+  const mealOptions = currentEvent
+    ? [currentEvent.meal_choice_1, currentEvent.meal_choice_2, currentEvent.meal_choice_3].filter(Boolean)
+    : [reg.meal_choice].filter(Boolean);
+  mealOptions.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = m;
+    if (m === reg.meal_choice) opt.selected = true;
+    mealSelect.appendChild(opt);
+  });
+  cells[3].innerHTML = '';
+  cells[3].appendChild(mealSelect);
+
+  // Status (4), Date (5), Payment (6) — keep as-is (not editable inline)
+
+  // Actions (7) — replace with Save / Cancel
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn-inline-save';
+  saveBtn.textContent = '✓ Save';
+  saveBtn.title = 'Save changes';
+  saveBtn.addEventListener('click', () => handleInlineEditSave(regId, nameInput, emailInput, phoneInput, mealSelect));
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'btn-inline-cancel';
+  cancelBtn.textContent = '✗';
+  cancelBtn.title = 'Cancel edit';
+  cancelBtn.addEventListener('click', () => handleInlineEditCancel(regId));
+
+  cells[7].innerHTML = '';
+  cells[7].appendChild(saveBtn);
+  cells[7].appendChild(cancelBtn);
+}
+
+async function handleInlineEditSave(regId, nameInput, emailInput, phoneInput, mealSelect) {
+  const tbody = document.getElementById('reg-tbody');
+  const tr = tbody.querySelector(`tr[data-reg-id="${regId}"]`);
+  if (!tr) return;
+
+  const saveBtn = tr.cells[7].querySelector('.btn-inline-save');
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '…'; }
+
+  const payload = {
+    registrationId: regId,
+    name: nameInput.value.trim(),
+    email: emailInput.value.trim() || null,
+    phone: phoneInput.value.trim() || null,
+    meal_choice: mealSelect.value || null,
+  };
+
+  if (!payload.name) {
+    alert('Name is required.');
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Save'; }
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API}/update-registration`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      // Update local registrations array
+      const reg = registrations.find(r => String(r.id) === String(regId));
+      if (reg && data.registration) {
+        Object.assign(reg, data.registration);
+      }
+      // Re-render to exit edit mode cleanly
+      renderRegistrations();
+      renderActivityFeed();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(`Save failed: ${data.error || 'Unknown error'}`);
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Save'; }
+    }
+  } catch {
+    alert('Network error. Please try again.');
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Save'; }
+  }
+}
+
+function handleInlineEditCancel(regId) {
+  renderRegistrations();
+}
+
+// ═════════════════════════════════════════════════════════════
 // ACTIVITY LOG (Activity & Payments tab → Activity subtab)
 // ═════════════════════════════════════════════════════════════
 
@@ -733,14 +876,105 @@ function renderActivityFeed() {
       icon = '📋'; message = `<strong>${escapeHtml(r.name)}</strong> registered — ${escapeHtml(r.meal_choice || '—')}`;
       badgeClass = 'activity-badge-pending';
     }
-    return `<div class="activity-item">
+    return `<div class="activity-item" data-reg-id="${escapeHtml(String(r.id))}">
       <div class="activity-icon ${badgeClass}">${icon}</div>
       <div class="activity-body">
         <div class="activity-msg">${message}</div>
         <div class="activity-time">${date} at ${time}</div>
       </div>
+      <button class="btn-activity-edit" title="Edit this entry" data-reg-id="${escapeHtml(String(r.id))}">✏️</button>
     </div>`;
   }).join('');
+
+  // Wire edit buttons
+  feedEl.querySelectorAll('.btn-activity-edit').forEach(btn => {
+    btn.addEventListener('click', () => handleActivityInlineEditStart(btn.dataset.regId));
+  });
+}
+
+// ═════════════════════════════════════════════════════════════
+// ACTIVITY INLINE EDIT
+// ═════════════════════════════════════════════════════════════
+
+function handleActivityInlineEditStart(regId) {
+  const feedEl = document.getElementById('activity-feed');
+  const item = feedEl && feedEl.querySelector(`.activity-item[data-reg-id="${regId}"]`);
+  if (!item || item.classList.contains('editing')) return;
+
+  const reg = registrations.find(r => String(r.id) === String(regId));
+  if (!reg) return;
+
+  item.classList.add('editing');
+
+  // Build inline edit form inside the activity body
+  const body = item.querySelector('.activity-body');
+  const mealOptions = currentEvent
+    ? [currentEvent.meal_choice_1, currentEvent.meal_choice_2, currentEvent.meal_choice_3].filter(Boolean)
+    : [reg.meal_choice].filter(Boolean);
+
+  const mealOptsHtml = mealOptions.map(m =>
+    `<option value="${escapeHtml(m)}" ${m === reg.meal_choice ? 'selected' : ''}>${escapeHtml(m)}</option>`
+  ).join('');
+
+  const statusOptsHtml = ['pending', 'paid'].map(s =>
+    `<option value="${s}" ${s === reg.payment_status ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`
+  ).join('');
+
+  body.innerHTML = `
+    <div class="activity-edit-form">
+      <label class="activity-edit-label">Name</label>
+      <input class="inline-edit-input" id="act-edit-name-${regId}" type="text" value="${escapeHtml(reg.name)}" maxlength="100" />
+      <label class="activity-edit-label">Meal</label>
+      <select class="inline-edit-select" id="act-edit-meal-${regId}">${mealOptsHtml}</select>
+      <label class="activity-edit-label">Status</label>
+      <select class="inline-edit-select" id="act-edit-status-${regId}">${statusOptsHtml}</select>
+      <div class="activity-edit-actions">
+        <button class="btn-inline-save" id="act-save-${regId}">✓ Save</button>
+        <button class="btn-inline-cancel" id="act-cancel-${regId}">✗ Cancel</button>
+      </div>
+    </div>`;
+
+  document.getElementById(`act-save-${regId}`).addEventListener('click', () => handleActivityInlineEditSave(regId));
+  document.getElementById(`act-cancel-${regId}`).addEventListener('click', () => renderActivityFeed());
+}
+
+async function handleActivityInlineEditSave(regId) {
+  const nameEl   = document.getElementById(`act-edit-name-${regId}`);
+  const mealEl   = document.getElementById(`act-edit-meal-${regId}`);
+  const statusEl = document.getElementById(`act-edit-status-${regId}`);
+  const saveBtn  = document.getElementById(`act-save-${regId}`);
+
+  if (!nameEl || !mealEl || !statusEl) return;
+
+  const name           = nameEl.value.trim();
+  const meal_choice    = mealEl.value;
+  const payment_status = statusEl.value;
+
+  if (!name) { alert('Name is required.'); return; }
+
+  if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '…'; }
+
+  try {
+    const res = await fetch(`${API}/update-registration`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
+      body: JSON.stringify({ registrationId: regId, name, meal_choice, payment_status }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const reg = registrations.find(r => String(r.id) === String(regId));
+      if (reg && data.registration) Object.assign(reg, data.registration);
+      renderRegistrations();
+      renderActivityFeed();
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(`Save failed: ${data.error || 'Unknown error'}`);
+      if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Save'; }
+    }
+  } catch {
+    alert('Network error. Please try again.');
+    if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = '✓ Save'; }
+  }
 }
 
 // ═════════════════════════════════════════════════════════════

@@ -2,6 +2,12 @@ const { handleCors, jsonResponse } = require('./auth');
 const { getSupabaseClient } = require('./supabase');
 const { Client, Environment } = require('square');
 
+// Test seam: allows injection of a mock Square client in tests.
+// In production this is always null.
+let _testSquareClient = null;
+function __setTestSquareClient(client) { _testSquareClient = client; }
+module.exports.__setTestSquareClient = __setTestSquareClient;
+
 // ── Input sanitisation helpers ───────────────────────────────────────────────
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const PHONE_RE = /^[\d\s\-\(\)\+\.]{0,20}$/;
@@ -61,6 +67,11 @@ exports.handler = async (event) => {
     const inputError = validateInputs(name, email, phone);
     if (inputError) return jsonResponse(400, { error: inputError });
 
+    // Validate guest count early (before Supabase) — cap at 10 to prevent abuse
+    if (guests.length > 10) {
+      return jsonResponse(400, { error: 'Maximum 10 guests per registration' });
+    }
+
     const cleanName = stripHtml(name);
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone ? phone.trim() : null;
@@ -77,11 +88,6 @@ exports.handler = async (event) => {
     if (eventError && eventError.code !== 'PGRST116') throw eventError;
     if (!activeEvent) {
       return jsonResponse(404, { error: 'No active event found' });
-    }
-
-    // Validate guest count (cap at 10 to prevent abuse)
-    if (guests.length > 10) {
-      return jsonResponse(400, { error: 'Maximum 10 guests per registration' });
     }
 
     // Validate each guest's meal_choice
@@ -146,15 +152,16 @@ exports.handler = async (event) => {
     }
 
     // Create Square payment link
-    const squareEnvironment =
-      process.env.SQUARE_ENVIRONMENT === 'production'
-        ? Environment.Production
-        : Environment.Sandbox;
-
-    const squareClient = new Client({
-      accessToken: process.env.SQUARE_ACCESS_TOKEN,
-      environment: squareEnvironment,
-    });
+    const squareClient = _testSquareClient || (() => {
+      const squareEnvironment =
+        process.env.SQUARE_ENVIRONMENT === 'production'
+          ? Environment.Production
+          : Environment.Sandbox;
+      return new Client({
+        accessToken: process.env.SQUARE_ACCESS_TOKEN,
+        environment: squareEnvironment,
+      });
+    })();
 
     const guestCount = guests.length;
     const pricePerPerson = activeEvent.price_per_person || 0;
