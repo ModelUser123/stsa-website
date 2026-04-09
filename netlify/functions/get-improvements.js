@@ -29,14 +29,17 @@ exports.handler = async (event) => {
 
     if (error) {
       // Table doesn't exist yet — return empty array with migration hint
-      if (error.code === '42P01' || (error.message && error.message.includes('does not exist'))) {
+      // PGRST205 = PostgREST "relation not found", 42P01 = PostgreSQL "undefined table"
+      if (error.code === '42P01' || error.code === 'PGRST205' || 
+          (error.message && (error.message.includes('does not exist') || error.message.includes('Could not find')))) {
         return jsonResponse(200, {
           improvements: [],
-          message: 'Run the migration in supabase/migration-improvements.sql to create the improvements table.',
+          needsMigration: true,
+          message: 'The improvements table has not been created yet. Starter suggestions are shown below.',
         }, event);
       }
       // Any other DB error — don't leak details
-      console.error('get-improvements DB error:', error.code);
+      console.error('get-improvements DB error:', error.code, error.message);
       return jsonResponse(500, { error: 'Failed to fetch improvements' }, event);
     }
 

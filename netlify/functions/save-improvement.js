@@ -85,7 +85,7 @@ exports.handler = async (event) => {
         .single();
 
       if (error) {
-        console.error('save-improvement update error:', error.code);
+        if (error.code === 'PGRST205' || error.code === '42P01') { return jsonResponse(503, { error: 'The improvements table has not been set up yet. Contact Chris to run the database migration.' }, event); } console.error('save-improvement update error:', error.code);
         return jsonResponse(500, { error: 'Failed to update improvement' }, event);
       }
 
@@ -108,7 +108,7 @@ exports.handler = async (event) => {
         .single();
 
       if (error) {
-        console.error('save-improvement insert error:', error.code);
+        if (error.code === 'PGRST205' || error.code === '42P01') { return jsonResponse(503, { error: 'The improvements table has not been set up yet. Contact Chris to run the database migration.' }, event); } console.error('save-improvement insert error:', error.code);
         return jsonResponse(500, { error: 'Failed to create improvement' }, event);
       }
 
