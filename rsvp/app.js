@@ -344,3 +344,8 @@ document.addEventListener('click', (e) => {
 // ─── Init ────────────────────────────────────────────
 
 init();
+
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}

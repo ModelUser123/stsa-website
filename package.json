@@ -12,6 +12,8 @@
     "square": "^42.0.0"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "^0.1.97",
+    "jimp": "^1.6.1",
     "vitest": "^1.6.0"
   }
 }
