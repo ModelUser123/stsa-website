@@ -188,6 +188,26 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
   const statusEl = document.getElementById('save-status');
   statusEl.hidden = true;
   const formData = gatherEventForm();
+
+  // Validate critical fields with visible error messages
+  const requiredFields = [
+    { key: 'event_name', label: 'Event Name' },
+    { key: 'event_date', label: 'Event Date' },
+    { key: 'meal_choice_1', label: 'Meal Choice 1' },
+    { key: 'meal_choice_2', label: 'Meal Choice 2' },
+    { key: 'meal_choice_3', label: 'Meal Choice 3' },
+  ];
+  const missing = requiredFields.filter(f => !formData[f.key] || !formData[f.key].toString().trim());
+  if (missing.length > 0) {
+    statusEl.textContent = '⚠️ Please fill in: ' + missing.map(f => f.label).join(', ');
+    statusEl.className = 'status-text error';
+    statusEl.hidden = false;
+    // Scroll to first missing field
+    const firstMissing = document.getElementById(missing[0].key);
+    if (firstMissing) firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
   try {
     const res = await fetch(`${API}/save-event`, {
       method: 'POST',
