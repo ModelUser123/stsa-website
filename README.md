@@ -160,7 +160,8 @@ stsa-website/
 │   └── brand.css       # Shared design tokens (colors, fonts, base styles)
 │
 ├── supabase/
-│   └── migration.sql   # Database schema (run once to set up tables)
+│   ├── migration.sql              # Database schema (run once to set up tables)
+│   └── migration-improvements.sql # Improvements/Ideas table (run after migration.sql)
 │
 ├── netlify.toml        # Netlify build config and function routing
 ├── package.json        # Node.js dependencies for functions
@@ -181,6 +182,14 @@ When you're ready to accept real money (instead of test payments):
 ### Database Setup
 
 The database schema lives in `supabase/migration.sql`. Run it once in the Supabase SQL Editor to create the `events` and `registrations` tables with proper indexes and row-level security policies.
+
+#### Future Improvements Table
+
+The `💡 Ideas` tab requires an additional table. Run `supabase/migration-improvements.sql` in the Supabase SQL Editor **after** the initial migration. Until the table exists, the Ideas tab gracefully shows starter suggestions and displays a helpful migration prompt.
+
+```sql
+-- Run in Supabase SQL Editor → supabase/migration-improvements.sql
+```
 
 ### Local Development
 

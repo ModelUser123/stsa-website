@@ -80,6 +80,9 @@ document.querySelectorAll('.tab').forEach(tab => {
     if (dataTab === 'analytics') {
       loadAnalytics();
     }
+    if (dataTab === 'ideas') {
+      loadImprovements();
+    }
     if (dataTab === 'event-setup') {
       // If history subtab is active when returning, refresh it
       const activeSubtab = document.querySelector('#tab-event-setup .subtab.active');
@@ -1395,6 +1398,303 @@ function formatTime(t) {
   const h12  = h % 12 || 12;
   return `${h12}:${String(min).padStart(2, '0')} ${ampm}`;
 }
+
+// ═════════════════════════════════════════════════════════════
+// IDEAS / FUTURE IMPROVEMENTS TAB
+// ═════════════════════════════════════════════════════════════
+
+const STARTER_IDEAS = [
+  {
+    id: '__starter_1',
+    title: 'Dues Payment System',
+    description: 'Allow members to pay annual dues ($100/company) through the same RSVP system. Hit a button, pay online.',
+    status: 'idea',
+    priority: 'high',
+    submitted_by: '',
+    created_at: null,
+    _starter: true,
+  },
+  {
+    id: '__starter_2',
+    title: 'Email Template Generator',
+    description: 'Auto-generate save-the-date and RSVP emails with event details pre-filled. Copy and paste into your email client.',
+    status: 'idea',
+    priority: 'medium',
+    submitted_by: '',
+    created_at: null,
+    _starter: true,
+  },
+  {
+    id: '__starter_3',
+    title: 'RSVP Deadline Enforcement',
+    description: 'Show a \'late registration\' notice after the RSVP deadline passes. Form still works but attendees see they\'re registering late.',
+    status: 'idea',
+    priority: 'low',
+    submitted_by: '',
+    created_at: null,
+    _starter: true,
+  },
+  {
+    id: '__starter_4',
+    title: 'Member Directory',
+    description: 'Searchable list of all STSA member companies and contacts.',
+    status: 'idea',
+    priority: 'medium',
+    submitted_by: '',
+    created_at: null,
+    _starter: true,
+  },
+  {
+    id: '__starter_5',
+    title: 'Event Email Blasts',
+    description: 'Send RSVP invitations directly from the admin dashboard instead of manually composing emails.',
+    status: 'idea',
+    priority: 'medium',
+    submitted_by: '',
+    created_at: null,
+    _starter: true,
+  },
+];
+
+let improvements = [];         // Live DB improvements
+let ideasFilterStatus = 'all'; // Current filter pill
+let ideasSortMode = 'date';    // 'date' | 'priority'
+
+const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
+const STATUS_LABELS  = { idea: '💭 Idea', planned: '📋 Planned', 'in-progress': '⚙️ In Progress', done: '✅ Done' };
+const STATUS_CLASSES = { idea: 'badge-idea', planned: 'badge-planned', 'in-progress': 'badge-inprogress', done: 'badge-done' };
+const PRIORITY_LABELS  = { low: '🔵 Low', medium: '🟡 Medium', high: '🔴 High' };
+const PRIORITY_CLASSES = { low: 'badge-plow', medium: 'badge-pmedium', high: 'badge-phigh' };
+
+async function loadImprovements() {
+  const listEl = document.getElementById('ideas-list');
+  listEl.innerHTML = '<p class="ideas-loading">Loading ideas…</p>';
+  try {
+    const res = await fetch(`${API}/get-improvements`, {
+      headers: { 'X-Admin-Token': adminToken },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const body = await res.json();
+    improvements = body.improvements || [];
+    renderImprovements();
+  } catch (err) {
+    listEl.innerHTML = '<p class="ideas-error">⚠️ Failed to load ideas. Try again.</p>';
+    console.error('loadImprovements:', err);
+  }
+}
+
+function getFilteredSorted() {
+  let list = [...improvements];
+
+  // Filter
+  if (ideasFilterStatus !== 'all') {
+    list = list.filter(i => i.status === ideasFilterStatus);
+  }
+
+  // Sort
+  if (ideasSortMode === 'priority') {
+    list.sort((a, b) => {
+      const pd = (PRIORITY_ORDER[a.priority] || 1) - (PRIORITY_ORDER[b.priority] || 1);
+      if (pd !== 0) return pd;
+      return new Date(b.created_at || 0) - new Date(a.created_at || 0);
+    });
+  } else {
+    list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  }
+
+  return list;
+}
+
+function renderImprovements() {
+  const listEl = document.getElementById('ideas-list');
+  const isUsingStarters = improvements.length === 0;
+  const displayList = isUsingStarters ? STARTER_IDEAS : getFilteredSorted();
+
+  if (isUsingStarters) {
+    listEl.innerHTML = `
+      <div class="ideas-starter-notice">
+        💡 These are suggested improvements. Click <strong>Add New Idea</strong> to save your own ideas to the list.
+      </div>
+      ${displayList.map(renderIdeaCard).join('')}
+    `;
+    return;
+  }
+
+  if (displayList.length === 0) {
+    listEl.innerHTML = '<p class="ideas-empty">No ideas in this category yet. Add one above! 👆</p>';
+    return;
+  }
+
+  listEl.innerHTML = displayList.map(renderIdeaCard).join('');
+
+  // Wire edit/delete buttons
+  listEl.querySelectorAll('.idea-edit-btn').forEach(btn => {
+    btn.addEventListener('click', () => openEditForm(btn.dataset.id));
+  });
+  listEl.querySelectorAll('.idea-delete-btn').forEach(btn => {
+    btn.addEventListener('click', () => deleteIdea(btn.dataset.id));
+  });
+}
+
+function renderIdeaCard(idea) {
+  const isStarter = idea._starter;
+  const dateStr = idea.created_at
+    ? new Date(idea.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : '';
+  const submittedLine = [
+    idea.submitted_by ? `<span class="idea-author">by ${escapeHtml(idea.submitted_by)}</span>` : '',
+    dateStr ? `<span class="idea-date">${dateStr}</span>` : '',
+  ].filter(Boolean).join(' &nbsp;·&nbsp; ');
+
+  return `
+    <div class="idea-card${isStarter ? ' idea-card-starter' : ''}">
+      <div class="idea-card-top">
+        <div class="idea-badges">
+          <span class="idea-badge ${STATUS_CLASSES[idea.status] || 'badge-idea'}">${STATUS_LABELS[idea.status] || idea.status}</span>
+          <span class="idea-badge ${PRIORITY_CLASSES[idea.priority] || 'badge-pmedium'}">${PRIORITY_LABELS[idea.priority] || idea.priority}</span>
+        </div>
+        ${!isStarter ? `
+        <div class="idea-actions">
+          <button class="idea-action-btn idea-edit-btn" data-id="${escapeHtml(idea.id)}" title="Edit">✏️</button>
+          <button class="idea-action-btn idea-delete-btn" data-id="${escapeHtml(idea.id)}" title="Delete">🗑️</button>
+        </div>
+        ` : ''}
+      </div>
+      <div class="idea-title">${escapeHtml(idea.title)}</div>
+      ${idea.description ? `<div class="idea-description">${escapeHtml(idea.description)}</div>` : ''}
+      ${submittedLine ? `<div class="idea-meta">${submittedLine}</div>` : ''}
+    </div>
+  `;
+}
+
+function openAddForm() {
+  document.getElementById('idea-edit-id').value = '';
+  document.getElementById('idea-title').value = '';
+  document.getElementById('idea-description').value = '';
+  document.getElementById('idea-priority').value = 'medium';
+  document.getElementById('idea-status').value = 'idea';
+  document.getElementById('idea-submitted-by').value = '';
+  document.getElementById('ideas-form-error').hidden = true;
+  document.getElementById('ideas-form-save').textContent = 'Save Idea';
+  document.getElementById('ideas-form-wrap').hidden = false;
+  document.getElementById('idea-title').focus();
+}
+
+function openEditForm(id) {
+  const idea = improvements.find(i => i.id === id);
+  if (!idea) return;
+  document.getElementById('idea-edit-id').value = idea.id;
+  document.getElementById('idea-title').value = idea.title;
+  document.getElementById('idea-description').value = idea.description || '';
+  document.getElementById('idea-priority').value = idea.priority || 'medium';
+  document.getElementById('idea-status').value = idea.status || 'idea';
+  document.getElementById('idea-submitted-by').value = idea.submitted_by || '';
+  document.getElementById('ideas-form-error').hidden = true;
+  document.getElementById('ideas-form-save').textContent = 'Update Idea';
+  document.getElementById('ideas-form-wrap').hidden = false;
+  document.getElementById('idea-title').focus();
+}
+
+function closeIdeaForm() {
+  document.getElementById('ideas-form-wrap').hidden = true;
+  document.getElementById('ideas-form-error').hidden = true;
+}
+
+async function saveIdea(e) {
+  e.preventDefault();
+  const errorEl = document.getElementById('ideas-form-error');
+  errorEl.hidden = true;
+
+  const id    = document.getElementById('idea-edit-id').value;
+  const title = document.getElementById('idea-title').value.trim();
+  const description = document.getElementById('idea-description').value.trim();
+  const priority = document.getElementById('idea-priority').value;
+  const status   = document.getElementById('idea-status').value;
+  const submitted_by = document.getElementById('idea-submitted-by').value.trim();
+
+  if (!title) {
+    errorEl.textContent = 'Title is required.';
+    errorEl.hidden = false;
+    return;
+  }
+
+  const payload = { title, description, priority, status, submitted_by };
+  if (id) payload.id = id;
+
+  const saveBtn = document.getElementById('ideas-form-save');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Saving…';
+
+  try {
+    const res = await fetch(`${API}/save-improvement`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Token': adminToken,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `HTTP ${res.status}`);
+    }
+
+    closeIdeaForm();
+    await loadImprovements();
+  } catch (err) {
+    errorEl.textContent = `Error: ${err.message}`;
+    errorEl.hidden = false;
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = id ? 'Update Idea' : 'Save Idea';
+  }
+}
+
+async function deleteIdea(id) {
+  if (!confirm('Delete this idea? This cannot be undone.')) return;
+
+  try {
+    const res = await fetch(`${API}/delete-improvement`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Admin-Token': adminToken,
+      },
+      body: JSON.stringify({ id }),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    await loadImprovements();
+  } catch (err) {
+    alert(`Failed to delete idea: ${err.message}`);
+  }
+}
+
+// ── Wire up Ideas tab UI controls ────────────────────────────
+(function initIdeasTab() {
+  // Add button
+  document.getElementById('ideas-add-btn').addEventListener('click', openAddForm);
+
+  // Form submit + cancel
+  document.getElementById('ideas-form').addEventListener('submit', saveIdea);
+  document.getElementById('ideas-form-cancel').addEventListener('click', closeIdeaForm);
+
+  // Filter pills
+  document.getElementById('ideas-filter-pills').addEventListener('click', (e) => {
+    const pill = e.target.closest('.ideas-pill');
+    if (!pill) return;
+    document.querySelectorAll('.ideas-pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    ideasFilterStatus = pill.dataset.filter;
+    renderImprovements();
+  });
+
+  // Sort select
+  document.getElementById('ideas-sort-select').addEventListener('change', (e) => {
+    ideasSortMode = e.target.value;
+    renderImprovements();
+  });
+})();
 
 // ═════════════════════════════════════════════════════════════
 // WELCOME BANNER — Dismiss on click, remember in sessionStorage

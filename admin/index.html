@@ -103,6 +103,10 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           Analytics
         </button>
+        <button class="tab" data-tab="ideas">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          💡 Ideas
+        </button>
         <div class="tab-indicator"></div>
       </div>
     </nav>
@@ -686,6 +690,93 @@
       </div>
 
     </section><!-- /#tab-analytics -->
+
+    <!-- ══════════════════════════════════
+         TAB 6: IDEAS / FUTURE IMPROVEMENTS
+    ══════════════════════════════════ -->
+    <section id="tab-ideas" class="tab-content" hidden>
+
+      <div class="tab-help-text">
+        <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        💡 Track ideas and feature requests for the STSA system. Anyone on the board can add suggestions here — they'll be saved and ready for the next improvement sprint.
+      </div>
+
+      <!-- Ideas Header -->
+      <div class="ideas-header">
+        <div>
+          <h2>Future Improvements</h2>
+          <p class="ideas-sub">Suggest, track, and prioritize ideas for the system.</p>
+        </div>
+        <button id="ideas-add-btn" class="btn-primary ideas-add-btn">+ Add New Idea</button>
+      </div>
+
+      <!-- Inline Add/Edit Form (hidden by default) -->
+      <div id="ideas-form-wrap" class="ideas-form-wrap" hidden>
+        <form id="ideas-form" class="ideas-form">
+          <input type="hidden" id="idea-edit-id" value="">
+          <div class="ideas-form-row">
+            <label class="ideas-label" for="idea-title">Title <span class="required">*</span></label>
+            <input id="idea-title" class="ideas-input" type="text" placeholder="Short, descriptive title…" required maxlength="120">
+          </div>
+          <div class="ideas-form-row">
+            <label class="ideas-label" for="idea-description">Description</label>
+            <textarea id="idea-description" class="ideas-textarea" placeholder="More detail about the idea…" rows="3" maxlength="1000"></textarea>
+          </div>
+          <div class="ideas-form-row ideas-form-inline">
+            <div class="ideas-form-field">
+              <label class="ideas-label" for="idea-priority">Priority</label>
+              <select id="idea-priority" class="ideas-select">
+                <option value="low">🔵 Low</option>
+                <option value="medium" selected>🟡 Medium</option>
+                <option value="high">🔴 High</option>
+              </select>
+            </div>
+            <div class="ideas-form-field">
+              <label class="ideas-label" for="idea-status">Status</label>
+              <select id="idea-status" class="ideas-select">
+                <option value="idea" selected>💭 Idea</option>
+                <option value="planned">📋 Planned</option>
+                <option value="in-progress">⚙️ In Progress</option>
+                <option value="done">✅ Done</option>
+              </select>
+            </div>
+            <div class="ideas-form-field">
+              <label class="ideas-label" for="idea-submitted-by">Submitted By</label>
+              <input id="idea-submitted-by" class="ideas-input" type="text" placeholder="Your name (optional)" maxlength="80">
+            </div>
+          </div>
+          <div id="ideas-form-error" class="ideas-form-error" hidden></div>
+          <div class="ideas-form-actions">
+            <button type="submit" id="ideas-form-save" class="btn-primary">Save Idea</button>
+            <button type="button" id="ideas-form-cancel" class="btn-secondary">Cancel</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Filter + Sort Controls -->
+      <div class="ideas-controls">
+        <div class="ideas-filter-pills" id="ideas-filter-pills">
+          <button class="ideas-pill active" data-filter="all">All</button>
+          <button class="ideas-pill" data-filter="idea">Ideas</button>
+          <button class="ideas-pill" data-filter="planned">Planned</button>
+          <button class="ideas-pill" data-filter="in-progress">In Progress</button>
+          <button class="ideas-pill" data-filter="done">Done</button>
+        </div>
+        <div class="ideas-sort">
+          <label class="ideas-label" for="ideas-sort-select">Sort:</label>
+          <select id="ideas-sort-select" class="ideas-select ideas-sort-select">
+            <option value="date">Newest First</option>
+            <option value="priority">Priority (High First)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Ideas List -->
+      <div id="ideas-list" class="ideas-list">
+        <p class="ideas-loading">Loading ideas…</p>
+      </div>
+
+    </section><!-- /#tab-ideas -->
 
   </div><!-- /#dashboard -->
 
