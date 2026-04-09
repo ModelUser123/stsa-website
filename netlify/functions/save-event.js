@@ -15,12 +15,21 @@ exports.handler = async (event) => {
   }
 
   try {
-    const body = JSON.parse(event.body || '{}');
+    const raw = JSON.parse(event.body || '{}');
 
     // Require at least a basic event identifier before touching the DB
     // (prevents accidentally deactivating events with an empty payload)
-    if (!body.event_name && !body.id) {
+    if (!raw.event_name && !raw.id) {
       return jsonResponse(400, { error: 'event_name or id is required' });
+    }
+
+    // Sanitize: strip empty strings (Supabase rejects '' for time/date/int columns)
+    // and convert NaN numbers to undefined (removes them from payload)
+    const body = {};
+    for (const [key, value] of Object.entries(raw)) {
+      if (value === '' || value === null || value === undefined) continue;
+      if (typeof value === 'number' && isNaN(value)) continue;
+      body[key] = value;
     }
 
     const supabase = getSupabaseClient();
@@ -58,9 +67,9 @@ exports.handler = async (event) => {
       savedEvent = data;
     }
 
-    return jsonResponse(200, { event: savedEvent });
+    return jsonResponse(200, { event: savedEvent }, event);
   } catch (err) {
     console.error('save-event error:', err);
-    return jsonResponse(500, { error: 'Unable to save event. Please try again.' });
+    return jsonResponse(500, { error: err.message || 'Unable to save event. Please try again.' }, event);
   }
 };

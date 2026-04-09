@@ -175,9 +175,17 @@ function gatherEventForm() {
   const formData = {};
   EVENT_FIELDS.forEach(field => {
     const el = document.getElementById(field);
-    if (el) {
-      formData[field] = field === 'price_per_person' ? parseInt(el.value, 10) : el.value;
+    if (!el) return;
+    const val = el.value.trim();
+    if (field === 'price_per_person') {
+      const num = parseInt(val, 10);
+      // Only include price if it's a valid number (avoids NaN → null → Supabase 500)
+      if (!isNaN(num)) formData[field] = num;
+    } else if (val !== '') {
+      // Only include non-empty strings — empty strings crash Supabase time/date columns
+      formData[field] = val;
     }
+    // If val is empty, we omit the field entirely so Supabase keeps the existing value
   });
   if (currentEvent?.id) formData.id = currentEvent.id;
   return formData;
