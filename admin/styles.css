@@ -3456,3 +3456,66 @@ tr.editing { background: #fffbf5 !important; outline: 2px solid var(--board-burn
   .ideas-header      { flex-direction: column; }
   .ideas-controls    { flex-direction: column; align-items: flex-start; }
 }
+
+
+/* ─── Save Button States ─── */
+.btn-saving {
+  opacity: 0.7;
+  cursor: wait !important;
+  position: relative;
+}
+.btn-saved {
+  background: #16A34A !important;
+  border-color: #16A34A !important;
+}
+.btn-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Publish Status Bar ─── */
+.publish-status-bar {
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.publish-status-bar a {
+  color: #c05621;
+  text-decoration: none;
+  font-weight: 600;
+}
+.publish-status-bar a:hover {
+  text-decoration: underline;
+}
+.publish-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.publish-dot.live {
+  background: #16A34A;
+  box-shadow: 0 0 6px rgba(22,163,74,0.5);
+  animation: pulse-dot 2s infinite;
+}
+.publish-dot.draft {
+  background: #9CA3AF;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

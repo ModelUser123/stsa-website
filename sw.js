@@ -1,4 +1,4 @@
-const CACHE_NAME = 'stsa-v1';
+const CACHE_NAME = 'stsa-v2';
 const STATIC_ASSETS = [
   '/rsvp/',
   '/rsvp/index.html',

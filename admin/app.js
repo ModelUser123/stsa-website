@@ -186,10 +186,19 @@ function gatherEventForm() {
 document.getElementById('event-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const statusEl = document.getElementById('save-status');
+  const submitBtn = e.target.querySelector('button[type="submit"]');
+  const originalBtnText = submitBtn.innerHTML;
+  
   statusEl.hidden = true;
+
+  // Visual feedback — button changes immediately
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="btn-spinner"></span> Saving...';
+  submitBtn.classList.add('btn-saving');
+
   const formData = gatherEventForm();
 
-  // Validate critical fields with visible error messages
+  // Validate critical fields
   const requiredFields = [
     { key: 'event_name', label: 'Event Name' },
     { key: 'event_date', label: 'Event Date' },
@@ -202,35 +211,58 @@ document.getElementById('event-form').addEventListener('submit', async (e) => {
     statusEl.textContent = '⚠️ Please fill in: ' + missing.map(f => f.label).join(', ');
     statusEl.className = 'status-text error';
     statusEl.hidden = false;
-    // Scroll to first missing field
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.classList.remove('btn-saving');
     const firstMissing = document.getElementById(missing[0].key);
     if (firstMissing) firstMissing.scrollIntoView({ behavior: 'smooth', block: 'center' });
     return;
   }
 
   try {
+    console.log('Saving event...', formData);
     const res = await fetch(`${API}/save-event`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'X-Admin-Token': adminToken },
       body: JSON.stringify(formData),
     });
     const data = await res.json();
+    console.log('Save response:', res.status, data);
     if (res.ok) {
       currentEvent = data.event;
       updateAllContextLabels();
-      statusEl.textContent = '✓ Event saved and published!';
+      // Success state — green check, stays visible
+      submitBtn.innerHTML = '✅ Published!';
+      submitBtn.classList.remove('btn-saving');
+      submitBtn.classList.add('btn-saved');
+      statusEl.textContent = '✓ Event saved and published! RSVP page is now live.';
       statusEl.className = 'status-text success';
       statusEl.hidden = false;
-      setTimeout(() => { statusEl.hidden = true; }, 3000);
+      // Reset button after 3 seconds
+      setTimeout(() => {
+        submitBtn.innerHTML = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('btn-saved');
+        statusEl.hidden = true;
+      }, 3000);
+      // Refresh history subtab if it exists
+      if (typeof loadEventHistory === 'function') loadEventHistory();
     } else {
-      statusEl.textContent = `Error: ${data.error}`;
+      statusEl.textContent = 'Error: ' + (data.error || 'Unknown error');
       statusEl.className = 'status-text error';
       statusEl.hidden = false;
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnText;
+      submitBtn.classList.remove('btn-saving');
     }
-  } catch {
-    statusEl.textContent = 'Network error. Please try again.';
+  } catch (err) {
+    console.error('Save error:', err);
+    statusEl.textContent = 'Network error: ' + err.message + '. Please try again.';
     statusEl.className = 'status-text error';
     statusEl.hidden = false;
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalBtnText;
+    submitBtn.classList.remove('btn-saving');
   }
 });
 
@@ -265,6 +297,15 @@ function updateAllContextLabels() {
 function renderPreview() {
   const wrap = document.getElementById('event-preview-wrap');
   if (!wrap) return;
+
+  // Publish status bar
+  const isLive = currentEvent && currentEvent.is_active;
+  const statusBarHtml = `<div class="publish-status-bar" style="background:${isLive ? '#ECFDF5' : '#F3F4F6'}; border:1px solid ${isLive ? '#A7F3D0' : '#D1D5DB'}">
+    <span class="publish-dot ${isLive ? 'live' : 'draft'}"></span>
+    ${isLive 
+      ? '<strong>LIVE</strong> — <a href="/rsvp/" target="_blank">View RSVP Page →</a>' 
+      : '<strong>DRAFT</strong> — Save &amp; Publish to make it live'}
+  </div>`;
 
   // Read directly from the form fields (live, unsaved values)
   function fv(id) {
@@ -325,7 +366,7 @@ function renderPreview() {
       ${lunchSponsor ? `<div style="margin-top:4px"><strong style="color:var(--board-navy)">Luncheon Sponsor:</strong> ${escapeHtml(lunchSponsor)}</div>` : ''}
     </div>` : '';
 
-  wrap.innerHTML = `
+  wrap.innerHTML = statusBarHtml + `
     <div class="preview-rsvp-header">
       <div class="preview-brand">STSA</div>
     </div>
