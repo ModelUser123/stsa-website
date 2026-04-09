@@ -979,31 +979,202 @@ tbody tr:hover td {
 }
 
 /* =============================================================
-   PRINT MEAL CARDS TAB
+   PRINT MEAL CARDS TAB — Redesigned for Earl Harper
+   Color-coded place cards: server sees color → serves right plate
    ============================================================= */
 
+/* Screen-only wrapper — everything inside is hidden when printing */
+.print-screen-only {
+  /* visible on screen, hidden in @media print below */
+}
+
+/* Summary bar */
+.print-summary-bar {
+  background: var(--board-navy);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+}
+
+.print-summary-text {
+  display: block;
+}
+
+/* Color legend */
+.print-legend {
+  background: #f8f7f5;
+  border: 1px solid #e8e4de;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.print-legend-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-mid);
+  margin-bottom: 10px;
+}
+
+.print-legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.print-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #e0dcd6;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.print-legend-swatch {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.print-legend-meal {
+  color: var(--text-dark);
+}
+
+/* Header row */
 .print-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 28px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
   gap: 16px;
 }
 
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 16px;
+.print-header-left h2 {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--board-navy);
+  margin: 0 0 4px 0;
 }
 
+.print-header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.print-header-sub {
+  color: var(--text-mid);
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+/* Sort toggle */
+.print-sort-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.print-sort-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  white-space: nowrap;
+}
+
+.print-sort-btns {
+  display: flex;
+  border: 1px solid #d6d0c8;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.print-sort-btn {
+  background: #fff;
+  border: none;
+  border-right: 1px solid #d6d0c8;
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-mid);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--font-body);
+}
+
+.print-sort-btn:last-child {
+  border-right: none;
+}
+
+.print-sort-btn.active,
+.print-sort-btn:hover {
+  background: var(--board-navy);
+  color: #fff;
+}
+
+/* Big print button */
+.btn-print-big {
+  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+/* Tip text */
+.print-tip-text {
+  background: #fffbeb;
+  border: 1px solid #f6e05e;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.84rem;
+  color: #78630a;
+  margin: 0 0 20px 0;
+}
+
+/* ─── CARD GRID (screen preview) ──────────────────────────── */
+.cards-print-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+/* Empty state */
+.cards-print-empty {
+  grid-column: 1/-1;
+  text-align: center;
+  color: var(--text-mid);
+  padding: 60px 20px;
+  font-size: 0.95rem;
+}
+
+/* Individual card — both screen and print */
 .meal-card {
   background: var(--board-white);
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 3px 14px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.06);
   overflow: hidden;
-  border-left: 6px solid;
   transition: var(--transition-fast);
+  display: flex;
+  flex-direction: column;
+  /* Approximate 3.5" × 2.5" — enforced in print media */
 }
 
 .meal-card:hover {
@@ -1011,70 +1182,180 @@ tbody tr:hover td {
   box-shadow: 0 8px 24px rgba(0,0,0,0.13), 0 2px 6px rgba(0,0,0,0.08);
 }
 
-.meal-card-body {
-  padding: 20px 22px;
-}
-
-.meal-card-name {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  line-height: 1.3;
-  letter-spacing: -0.2px;
+/* Big color band across the top (≥ 0.5" tall — ~40px on screen) */
+.meal-card-band {
+  padding: 14px 18px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 .meal-card-meal {
-  font-size: 0.88rem;
-  font-weight: 600;
-  margin-top: 5px;
-  letter-spacing: 0.2px;
-  opacity: 0.85;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  text-align: center;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+/* Name area — large, bold, centered, black */
+.meal-card-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 16px 12px;
+}
+
+.meal-card-name {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #111;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Event footer — small, gray, bottom of card */
+.meal-card-footer {
+  border-top: 1px solid #ece8e2;
+  padding: 8px 14px;
+  text-align: center;
+  font-size: 0.7rem;
+  color: #999;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+/* Page grouping wrapper (wraps 6 cards per page) */
+.cards-page-group {
+  display: contents; /* transparent on screen — only matters for print */
 }
 
 /* =============================================================
-   PRINT STYLES
+   @media print — What comes out of the printer
+   Server sees color → serves correct plate → no questions asked
    ============================================================= */
-
 @media print {
+  /* Suppress browser header/footer chrome */
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+
+  /* Hide EVERYTHING except the cards */
+  body > *,
+  .login-screen,
+  .welcome-banner,
   .dash-header,
   .tabs,
-  .print-header,
-  .tab-content:not(#tab-print-cards) {
+  .tab-content:not(#tab-print-cards),
+  .print-screen-only,
+  .tab-help-text {
     display: none !important;
   }
 
+  /* Show only the print-cards tab */
   #tab-print-cards {
     display: block !important;
-    padding: 0;
-    max-width: none;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
   }
 
-  .cards-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+  /* 2-column × 3-row grid, exactly 6 cards per page */
+  .cards-print-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-rows: repeat(3, 2.5in) !important;
+    gap: 0 !important;
+    page-break-inside: auto;
   }
 
+  /* Empty-state message hidden when printing */
+  .cards-print-empty {
+    display: none !important;
+  }
+
+  /* Page break after every 6th card */
+  .cards-page-group {
+    display: contents;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  /* Each card = ~3.5" × 2.5" (business card landscape) */
   .meal-card {
-    break-inside: avoid;
-    border-left-width: 7px;
-    box-shadow: none;
-    border: 1px solid #ddd;
-    border-left-width: 7px;
-    border-radius: 6px;
+    width: 100%;
+    height: 2.5in;
+    box-shadow: none !important;
     transform: none !important;
     transition: none !important;
+    border-radius: 0 !important;
+    /* Dashed cut lines between cards */
+    border: 1px dashed #ccc;
+    overflow: hidden;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    display: flex;
+    flex-direction: column;
   }
 
+  /* Big color band — ~0.75 inch tall, unmistakable from a distance */
+  .meal-card-band {
+    min-height: 0.75in !important;
+    padding: 0 18px !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  /* Meal name in white on the color band */
+  .meal-card-meal {
+    font-size: 14pt !important;
+    font-weight: 900 !important;
+    color: #fff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+
+  /* Name — large, bold, centered, ~24pt equivalent */
   .meal-card-body {
-    padding: 14px 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px !important;
   }
 
   .meal-card-name {
-    font-size: 0.95rem;
+    font-size: 22pt !important;
+    font-weight: 900 !important;
+    color: #000 !important;
+    text-align: center;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
   }
 
-  .meal-card-meal {
-    font-size: 0.82rem;
+  /* Event footer — small, gray, for identification of loose cards */
+  .meal-card-footer {
+    font-size: 7pt !important;
+    color: #777 !important;
+    padding: 4px 10px !important;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
   }
 }
 
@@ -1141,7 +1422,7 @@ tbody tr:hover td {
     padding: 18px 20px;
   }
 
-  .cards-grid {
+  .cards-print-grid {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
@@ -1168,7 +1449,7 @@ tbody tr:hover td {
 }
 
 @media (max-width: 480px) {
-  .cards-grid {
+  .cards-print-grid {
     grid-template-columns: 1fr;
   }
 

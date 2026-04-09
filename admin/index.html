@@ -566,22 +566,59 @@
     ══════════════════════════════════ -->
     <section id="tab-print-cards" class="tab-content" hidden>
 
-      <div class="tab-help-text">
-        <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Print color-coded cards for the venue servers. Each card shows the attendee's name and meal choice. Hand them out at the door!
-      </div>
+      <!-- ── Screen-only UI (hidden when printing) ── -->
+      <div class="print-screen-only">
 
-      <div class="print-header">
-        <div>
-          <h2>Meal Cards</h2>
-          <p class="print-header-sub" id="print-event-context">Loading…</p>
+        <div class="tab-help-text">
+          <svg class="tab-help-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Color-coded cards for the venue servers — server sees the color, serves the right plate, no questions asked.
         </div>
-        <button id="print-btn" class="btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Print Cards
-        </button>
-      </div>
-      <div id="cards-preview" class="cards-grid"></div>
+
+        <!-- Summary bar -->
+        <div class="print-summary-bar" id="print-summary-bar">
+          <span class="print-summary-text" id="print-summary-text">Loading…</span>
+        </div>
+
+        <!-- Color legend -->
+        <div class="print-legend" id="print-legend" hidden>
+          <div class="print-legend-title">Color Guide for Servers:</div>
+          <div class="print-legend-items" id="print-legend-items"></div>
+        </div>
+
+        <!-- Header row: event context + sort controls + print button -->
+        <div class="print-header">
+          <div class="print-header-left">
+            <h2>Meal Cards</h2>
+            <p class="print-header-sub" id="print-event-context">Loading…</p>
+          </div>
+          <div class="print-header-right">
+            <!-- Sort toggle -->
+            <div class="print-sort-wrap" id="print-sort-wrap" hidden>
+              <span class="print-sort-label">Sort by:</span>
+              <div class="print-sort-btns">
+                <button class="print-sort-btn active" data-sort="name">Name</button>
+                <button class="print-sort-btn" data-sort="meal">Meal Choice</button>
+                <button class="print-sort-btn" data-sort="date">Reg. Date</button>
+              </div>
+            </div>
+            <!-- Print button -->
+            <button id="print-btn" class="btn-primary btn-print-big">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              🖨️ Print Cards
+            </button>
+          </div>
+        </div>
+
+        <!-- Tip text -->
+        <p class="print-tip-text" id="print-tip-text" hidden>
+          💡 <strong>Tip:</strong> Print on card stock for best results. Cut along the dashed lines and place one card at each seat before guests arrive.
+        </p>
+
+      </div><!-- /.print-screen-only -->
+
+      <!-- ── Card preview grid (visible on screen AND in print) ── -->
+      <div id="cards-preview" class="cards-print-grid"></div>
+
     </section><!-- /#tab-print-cards -->
 
     <!-- ══════════════════════════════════
@@ -652,6 +689,7 @@
 
   </div><!-- /#dashboard -->
 
+  <script src="meal-cards.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

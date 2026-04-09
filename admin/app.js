@@ -1088,55 +1088,121 @@ document.getElementById('export-csv-btn').addEventListener('click', () => {
 });
 
 // ═════════════════════════════════════════════════════════════
-// PRINT MEAL CARDS — Database-driven color mapping
+// PRINT MEAL CARDS — Earl Harper's color-coded place cards
+// Database-driven color mapping. Server sees color → serves plate.
 // ═════════════════════════════════════════════════════════════
 
-function renderMealCards() {
-  const container = document.getElementById('cards-preview');
-  if (!container) return;
-  container.innerHTML = '';
+let cardSortBy = 'name'; // current sort state
 
+// Wire up the sort toggle buttons
+document.querySelectorAll('.print-sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.print-sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    cardSortBy = btn.dataset.sort;
+    renderMealCards();
+  });
+});
+
+document.getElementById('print-btn').addEventListener('click', () => window.print());
+
+function renderMealCards() {
+  const MC = window.MealCards; // loaded from meal-cards.js
+  const container = document.getElementById('cards-preview');
+  const summaryEl  = document.getElementById('print-summary-text');
+  const legendEl   = document.getElementById('print-legend');
+  const legendItemsEl = document.getElementById('print-legend-items');
+  const sortWrapEl = document.getElementById('print-sort-wrap');
+  const tipEl      = document.getElementById('print-tip-text');
+
+  if (!container) return;
+
+  // Empty state
   if (!currentEvent || !registrations.length) {
-    container.innerHTML = '<p style="color:var(--text-light);padding:40px 0;text-align:center;font-size:0.95rem">No one has registered yet — once they do, their meal cards will appear here ready to print! 🎉</p>';
+    container.innerHTML = '<p class="cards-print-empty">No one has registered yet — once they do, their meal cards will appear here ready to print! 🎉</p>';
+    if (summaryEl) summaryEl.textContent = 'No registrations yet';
+    if (legendEl)   legendEl.hidden = true;
+    if (sortWrapEl) sortWrapEl.hidden = true;
+    if (tipEl)      tipEl.hidden = true;
     return;
   }
 
-  // Meal → color mapping built from database values (not hardcoded meal names)
-  const meals    = [currentEvent.meal_choice_1, currentEvent.meal_choice_2, currentEvent.meal_choice_3].filter(Boolean);
-  const palettes = [
-    { border: 'var(--meal-1)', bg: 'var(--meal-1-light)', color: 'var(--meal-1)' },
-    { border: 'var(--meal-2)', bg: 'var(--meal-2-light)', color: 'var(--meal-2)' },
-    { border: 'var(--meal-3)', bg: 'var(--meal-3-light)', color: 'var(--meal-3)' },
-  ];
-  const mealColors = {};
-  meals.forEach((m, i) => { mealColors[m] = palettes[i] || { border: '#888', bg: '#f0f0f0', color: '#555' }; });
+  // Generate sorted card data via the pure helper (database-driven colors)
+  const cards = MC.generateCards(registrations, currentEvent, cardSortBy);
+  const pages  = MC.paginateCards(cards);
 
-  registrations.forEach(r => {
-    const colors = mealColors[r.meal_choice] || { border: 'var(--text-light)', bg: '#f0f0f0', color: '#666' };
-    const card   = document.createElement('div');
-    card.className = 'meal-card';
-    card.style.borderLeftColor = colors.border;
+  // ── Summary bar ──
+  if (summaryEl) summaryEl.textContent = MC.buildSummary(cards, currentEvent);
 
-    const body = document.createElement('div');
-    body.className = 'meal-card-body';
-    body.style.background = colors.bg;
+  // ── Color legend ──
+  if (legendEl && legendItemsEl) {
+    const colorMap = MC.getMealColorMap(currentEvent);
+    legendItemsEl.innerHTML = '';
+    Object.entries(colorMap).forEach(([meal, color]) => {
+      const item = document.createElement('div');
+      item.className = 'print-legend-item';
+      item.innerHTML = `
+        <div class="print-legend-swatch" style="background:${color.hex};"></div>
+        <span class="print-legend-meal"><strong style="color:${color.hex}">${color.name}</strong> — ${escapeHtml(meal)}</span>
+      `;
+      legendItemsEl.appendChild(item);
+    });
+    legendEl.hidden = false;
+  }
 
-    const nameEl = document.createElement('div');
-    nameEl.className = 'meal-card-name';
-    nameEl.textContent = r.name;
+  // ── Show controls ──
+  if (sortWrapEl) sortWrapEl.hidden = false;
+  if (tipEl)      tipEl.hidden = false;
 
-    const mealEl = document.createElement('div');
-    mealEl.className = 'meal-card-meal';
-    mealEl.style.color = colors.color;
-    mealEl.textContent = r.meal_choice || '—';
+  // ── Build card grid ──
+  container.innerHTML = '';
 
-    body.append(nameEl, mealEl);
-    card.appendChild(body);
-    container.appendChild(card);
+  pages.forEach((pageCards) => {
+    // Each group of ≤6 cards becomes a .cards-page-group
+    // In print, page-break-after:always is applied to each group
+    const group = document.createElement('div');
+    group.className = 'cards-page-group';
+
+    pageCards.forEach(card => {
+      const cardEl = document.createElement('div');
+      cardEl.className = 'meal-card';
+
+      // Color band with meal text
+      const band = document.createElement('div');
+      band.className = 'meal-card-band';
+      band.style.background = card.colorHex;
+
+      const mealEl = document.createElement('div');
+      mealEl.className = 'meal-card-meal';
+      mealEl.textContent = card.mealText.toUpperCase();
+      band.appendChild(mealEl);
+
+      // Name (large, bold, centered)
+      const body = document.createElement('div');
+      body.className = 'meal-card-body';
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'meal-card-name';
+      nameEl.textContent = card.name.toUpperCase();
+      body.appendChild(nameEl);
+
+      // Footer: event name · date (identifies loose cards)
+      const footer = document.createElement('div');
+      footer.className = 'meal-card-footer';
+      const dateStr = card.eventDate
+        ? new Date(card.eventDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' })
+        : '';
+      footer.textContent = dateStr
+        ? `${card.eventName} · ${dateStr}`
+        : card.eventName;
+
+      cardEl.append(band, body, footer);
+      group.appendChild(cardEl);
+    });
+
+    container.appendChild(group);
   });
 }
-
-document.getElementById('print-btn').addEventListener('click', () => window.print());
 
 // ═════════════════════════════════════════════════════════════
 // ANALYTICS TAB — Loads current + history, renders everything
