@@ -16,6 +16,13 @@ exports.handler = async (event) => {
 
   try {
     const body = JSON.parse(event.body || '{}');
+
+    // Require at least a basic event identifier before touching the DB
+    // (prevents accidentally deactivating events with an empty payload)
+    if (!body.event_name && !body.id) {
+      return jsonResponse(400, { error: 'event_name or id is required' });
+    }
+
     const supabase = getSupabaseClient();
 
     // Deactivate all existing events
